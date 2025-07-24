@@ -28,7 +28,8 @@ $(OBJS): $(ODIR)/%.o: $(SDIR)/%.cpp | $(DIRS)
 $(DIRS):
 	@mkdir -p $@
 
-r run: all
+r run:
+	@$(MAKE) all > /dev/null
 	@./$(NAME) $(ARGS)
 
 rr rerun: clean r
