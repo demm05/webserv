@@ -1,5 +1,5 @@
 NAME		=	webserv
-ARGS		=
+ARGS		?=
 # =============================== COMPILATION ================================ #
 CXX			=	c++
 CXXFLAGS	=	-std=c++98 -Wall -Wextra -Werror -I$(HDIR)
@@ -13,13 +13,16 @@ OBJS		:=	$(patsubst $(SDIR)/%.cpp,$(ODIR)/%.o, $(SRCS))
 DIRS		=	$(sort $(dir $(OBJS)))
 # ================================= INCLUDES ================================= #
 include mk/tools.mk
+include mk/options.mk
+include mk/help.mk
 # ================================== RULES =================================== #
-all: $(DIRS) $(NAME)
+all:
+	@$(FMAKE) $(NAME) 
 
 $(NAME): $(OBJS)
 	@$(CXX) $(CXXFLAGS) $^ -o $@
 
-$(OBJS): $(ODIR)/%.o: $(SDIR)/%.cpp
+$(OBJS): $(ODIR)/%.o: $(SDIR)/%.cpp | $(DIRS)
 	@$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(DIRS):
@@ -36,4 +39,7 @@ c clean:
 f fclean: clean
 	@rm -rf $(NAME)
 
-re: fclean all
+re: fclean
+	@$(MAKE) all
+
+.PHONY: all build c clean f fclean re check v valgrind r run rr rerun
