@@ -7,21 +7,32 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
+      - name: Check out code (including submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
-    - name: Install build tools and cppcheck
-      run: sudo apt-get update && sudo apt-get install -y build-essential cppcheck
+      - name: Cache build objects
+        id: cache-obj
+        uses: actions/cache@v4
+        with:
+          path: obj
+          key: ${{ runner.os }}-build-${{ hashFiles('**/*.cpp', '**/*.hpp', 'Makefile', 'mk/*.mk') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
 
-    - name: Run static analysis
-      run: make check
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential cppcheck
 
-    - name: Build the project
-      run: make
+      - name: Run static analysis (cppcheck)
+        run: make check
+        
+      - name: Build the project
+        run: make all
 
-    - name: Run tests
-      run: make test
+      - name: Run tests
+        run: make test
