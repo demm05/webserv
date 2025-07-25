@@ -17,7 +17,7 @@ include mk/options.mk
 include mk/help.mk
 include mk/tests.mk
 # ================================== RULES =================================== #
-all: compiledb
+all:
 	@$(FMAKE) $(NAME) 
 
 $(NAME): $(OBJS)
