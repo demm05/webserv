@@ -1,0 +1,18 @@
+{
+  "configurations": [
+    {
+      "name": "Linux / macOS",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/lib/googletest/googletest/include"
+      ],
+      "defines": [],
+      "cStandard": "c11",
+      "cppStandard": "c++98",
+      "intelliSenseMode": "linux-clang-x64",
+      "compilerPath": "/usr/bin/clang++"
+    }
+  ],
+  "version": 4
+}

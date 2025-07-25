@@ -15,8 +15,9 @@ DIRS		=	$(sort $(dir $(OBJS)))
 include mk/tools.mk
 include mk/options.mk
 include mk/help.mk
+include mk/tests.mk
 # ================================== RULES =================================== #
-all:
+all: compiledb
 	@$(FMAKE) $(NAME) 
 
 $(NAME): $(OBJS)
@@ -37,10 +38,10 @@ rr rerun: clean r
 c clean:
 	@rm -rf $(ODIR)
 
-f fclean: clean
+f fclean: clean test_clean
 	@rm -rf $(NAME)
 
 re: fclean
 	@$(MAKE) all
 
-.PHONY: all build c clean f fclean re check v valgrind r run rr rerun
+.PHONY: all build c clean f fclean re check v valgrind r run rr rerun init

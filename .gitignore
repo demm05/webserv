@@ -9,3 +9,4 @@ webserv
 .cache/
 compile_commands.json
 .help_shown.stamp
+run_tests
