@@ -22,3 +22,6 @@ jobs:
 
     - name: Build the project
       run: make
+
+    - name: Run tests
+      run: make test
