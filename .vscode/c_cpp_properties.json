@@ -5,7 +5,7 @@
       "includePath": [
         "${workspaceFolder}/**",
         "${workspaceFolder}/include",
-        "${workspaceFolder}/lib/googletest/googletest/include"
+        "${workspaceFolder}/lib/doctest/doctest"
       ],
       "defines": [],
       "cStandard": "c11",
