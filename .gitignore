@@ -10,3 +10,5 @@ webserv
 compile_commands.json
 .help_shown.stamp
 run_tests
+doxy/
+Doxyfile

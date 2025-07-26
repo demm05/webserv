@@ -44,4 +44,4 @@ f fclean: clean test_clean
 re: fclean
 	@$(MAKE) all
 
-.PHONY: all build c clean f fclean re check v valgrind r run rr rerun init
+.PHONY: all build c clean f fclean re check v valgrind r run rr rerun init doc
