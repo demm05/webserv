@@ -9,3 +9,7 @@ v valgrind:
 
 i init:
 	@git submodule update --init --remote --recursive
+
+doc:
+	@test -f Doxyfile || (doxygen -g && cat Doxyfile.template > Doxyfile)
+	@doxygen Doxyfile
