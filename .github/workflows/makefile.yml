@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,22 +16,29 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Cache build objects
+      # Caches system dependencies (apt packages)
+      - name: Cache system dependencies
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: build-essential cppcheck
+          version: 1.0 # Change this version to force a cache refresh
+        
+      - name: Cache build artifacts
         id: cache-obj
         uses: actions/cache@v4
         with:
           path: obj
-          key: ${{ runner.os }}-build-${{ hashFiles('**/*.cpp', '**/*.hpp', 'Makefile', 'mk/*.mk') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('**/.*pp', 'Makefile', 'mk/*.mk') }}
           restore-keys: |
             ${{ runner.os }}-build-
 
-      - name: Install dependencies
+      - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential cppcheck
 
-      - name: Run static analysis (cppcheck)
+      - name: Run static analysis
         run: make check
-        
-      - name: Build the project
+      
+      - name: Build project
         run: make all
 
       - name: Run tests
