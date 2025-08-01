@@ -3,6 +3,7 @@ TEST_NAME		=	run_tests
 TEST_DIR		=	tests
 TEST_SRCS		:=	$(shell find $(TEST_DIR) -name "*.cpp")
 TEST_OBJS		:=	$(patsubst $(TEST_DIR)/%.cpp,$(ODIR)/tests/%.o,$(TEST_SRCS))
+TEST_DEPS		:=	$(patsubst %.o,%.d,$(TEST_OBJS))
 
 TEST_CXXFLAGS	=	$(filter-out -Werror, $(CXXFLAGS)) -I$(DOCTEST_DIR) -std=c++17
 
