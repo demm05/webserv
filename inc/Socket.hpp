@@ -5,8 +5,6 @@
 
 class Socket {
 public:
-    static const int defaultPort_;
-
     Socket();
     explicit Socket(int port);
     Socket(std::string const &address, int port);
@@ -14,6 +12,8 @@ public:
 
     int getFd(void) const;
     const struct sockaddr_in &getAddr(void) const;
+    void bindTo(int port);
+    void bindTo(std::string const &address, int port);
 
 private:
     sockaddr_in addr_;
