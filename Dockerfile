@@ -14,6 +14,9 @@ RUN make all
 
 FROM alpine:3.22.0
 
+RUN apk update && \
+    apk add --no-cache libstdc++
+
 WORKDIR /app
 
 COPY --from=builder /app/webserv .
