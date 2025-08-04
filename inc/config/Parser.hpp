@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Lexer.hpp"
+#include "ServerConfig.hpp"
+
 /* GRAMMAR in EBNF
  * 	config_file = { server_block } ;
  *	server_block = "server" "{" { statement } "}" ;
@@ -9,8 +12,12 @@
  *	parameter = IDENTIFIER | STRING | NUMBER ;
  */
 
-class ParseConfig {
+class Parser {
 public:
-    ParseConfig(int num_of_configs, char const **configs);
-    ~ParseConfig();
+    Parser(char const &fpath);
+    ~Parser();
+
+private:
+    ServerConfig config_;
+    Lexer lexer_;
 };
