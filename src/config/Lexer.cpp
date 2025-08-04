@@ -6,7 +6,12 @@ Lexer::Lexer(std::string const &content, std::vector<Token> &res)
     readChar();
 }
 
-void Lexer::tokenize() {
+void Lexer::tokenize(std::string const &content, std::vector<Token> &res) {
+    Lexer lex(content, res);
+    lex.run();
+}
+
+void Lexer::run() {
     while (ch_) {
         eatWhitespaces();
         if (!ch_)
@@ -97,9 +102,9 @@ void Lexer::pushToken(TokenType type, std::string const &literal) {
     tokens_.push_back(tok);
 }
 
-void Lexer::printTokens() {
-    for (size_t i = 0; i < tokens_.size(); i++) {
-        std::cout << tokens_[i].literal << " -> ";
+void Lexer::printTokens(TokenArray const &tokens) {
+    for (size_t i = 0; i < tokens.size(); i++) {
+        std::cout << tokens[i].literal << " -> ";
     }
     std::cout << std::endl;
 }

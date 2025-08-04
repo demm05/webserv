@@ -1,31 +1,11 @@
 #include <iostream>
-#include <fstream>
-#include "Lexer.hpp"
-#include "Parser.hpp"
 #include <exception>
-#include <vector>
-#include <cctype>
-#include <sstream>
-
-void parse_file(char const *fpath) {
-    std::ifstream infile(fpath);
-    if (!infile.is_open())
-        throw std::runtime_error("`" + std::string(fpath) + "`: cannot be opened");
-    std::stringstream buffer;
-    buffer << infile.rdbuf();
-    std::string fcontent = buffer.str();
-    infile.close();
-    std::vector<Token> res;
-    res.reserve(100);
-    Lexer l(fcontent, res);
-    l.tokenize();
-    l.printTokens();
-}
+#include "Parser.hpp"
 
 void parsee(int num_of_configs, char const **configs) {
     for (int i = 0; i < num_of_configs; i++) {
         try {
-            parse_file(configs[i]);
+            Parser::parseFile(configs[i]);
         } catch (std::exception const &e) {
             std::cerr << "Error: " << e.what() << std::endl;
         };

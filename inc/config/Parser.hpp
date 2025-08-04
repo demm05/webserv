@@ -14,10 +14,26 @@
 
 class Parser {
 public:
-    Parser(char const &fpath);
-    ~Parser();
+    static ServerConfig parseFile(char const *fpath);
 
 private:
+    std::string content_;
     ServerConfig config_;
-    Lexer lexer_;
+    Lexer::TokenArray tokens_;
+    size_t pos_;
+
+    Parser(char const *fpath);
+    void run();
+    size_t size();
+
+    Token const &currentToken();
+    Token const &peekToken();
+    void consumeToken();
+    void expectToken(TokenType type);
+    void expectToken(std::string literal);
+
+    void handleServerBlock();
+    void handleStatement();
+    void handleDirective();
+    void handleLocationBlock();
 };
