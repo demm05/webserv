@@ -12,6 +12,7 @@ public:
     void addDirective(std::string const &key, std::vector<std::string> const &directive);
     bool getDirective(std::string const &key, std::vector<std::string> const **out_directive) const;
     std::vector<std::string> const &getDirective(std::string const &key) const;
+    DirectiveMap &getDirectiveMap();
 
 private:
     DirectiveMap directives_;
