@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Lexer.hpp"
+#include "Parser.hpp"
 #include <exception>
 #include <vector>
 #include <cctype>
