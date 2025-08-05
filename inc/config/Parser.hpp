@@ -24,16 +24,18 @@ private:
 
     Parser(char const *fpath);
     void run();
-    size_t size();
+    size_t size() const;
 
-    Token const &currentToken();
-    Token const &peekToken();
+    Token const &currentToken() const;
+    Token const &peekToken() const;
     void consumeToken();
     void expectToken(TokenType type);
     void expectToken(std::string literal);
 
     void handleServerBlock();
     void handleStatement();
-    void handleDirective();
+    void handleDirective(DirectiveBlock &);
     void handleLocationBlock();
+    void displayCurrentToken() const;
+    bool isTokenAValue() const;
 };
