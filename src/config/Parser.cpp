@@ -24,17 +24,17 @@ void Parser::run() {
     handleServerBlock();
 }
 
-size_t Parser::size() {
+size_t Parser::size() const {
     return tokens_.size();
 }
 
-Token const &Parser::currentToken() {
+Token const &Parser::currentToken() const{
     if (pos_ > size())
         return tokens_.back();
     return tokens_[pos_];
 }
 
-Token const &Parser::peekToken() {
+Token const &Parser::peekToken() const {
     if (pos_ > size())
         return tokens_.back();
     return tokens_[pos_ + 1];
@@ -57,11 +57,18 @@ void Parser::expectToken(std::string literal) {
     consumeToken();
 }
 
+bool Parser::isTokenAValue() const {
+    static const TokenType validTypes[] = {IDENTIFIER, STRING, NUMBER};
+    static const size_t size = sizeof(validTypes) / sizeof(validTypes[0]);
+    return currentToken().isTypeIn(validTypes, size);
+}
+
 void Parser::handleServerBlock() {
-    while (pos_ < size()) {
+    while (currentToken().type != END_OF_FILE) {
         expectToken("server");
         expectToken(LEFT_BRACE);
-        handleStatement();
+        while (currentToken().type != RIGHT_BRACE)
+            handleStatement();
         expectToken(RIGHT_BRACE);
     }
 }
@@ -70,16 +77,37 @@ void Parser::handleStatement() {
     if (currentToken().literal == "location")
         handleLocationBlock();
     else
-        handleDirective();
+        handleDirective(config_);
 }
 
 void Parser::handleLocationBlock() {
+
     expectToken("location");
-    expectToken(IDENTIFIER);
+    if (peekToken().type != LEFT_BRACE)
+        throw std::runtime_error("non matching token types");
+    if (!isTokenAValue())
+        throw std::runtime_error("Expected a location name (identifier).");
+    std::string key = currentToken().literal;
+    consumeToken();
     expectToken(LEFT_BRACE);
-    handleDirective();
+    LocationBlock loc_block;
+    while (currentToken().type != RIGHT_BRACE)
+        handleDirective(loc_block);
     expectToken(RIGHT_BRACE);
+    config_.addLocation(currentToken().literal, loc_block);
 }
 
-void Parser::handleDirective() {
+void Parser::handleDirective(DirectiveBlock &db) {
+    if (!isTokenAValue())
+        throw std::runtime_error("Expected a directive name (identifier).");
+    std::string const &key = currentToken().literal;
+    consumeToken();
+
+    std::vector<std::string> values;
+    while (isTokenAValue()) {
+        values.push_back(currentToken().literal);
+        consumeToken();
+    }
+    db.addDirective(key, values);
+    expectToken(SEMICOLON);
 }

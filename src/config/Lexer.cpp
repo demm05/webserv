@@ -25,6 +25,7 @@ void Lexer::run() {
         else
             handleUnknown();
     }
+    pushToken(END_OF_FILE, ""); 
 }
 
 void Lexer::handleComment() {
