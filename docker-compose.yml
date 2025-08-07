@@ -1,0 +1,10 @@
+services:
+  webserv:
+    container_name: webserv
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./config/example.conf:/etc/webserv.config.conf:ro
+    ports:
+      - 9191:9191

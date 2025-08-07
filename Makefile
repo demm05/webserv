@@ -1,5 +1,5 @@
 NAME		=	webserv
-ARGS		?=
+ARGS		?=	config/example.conf
 # =============================== COMPILATION ================================ #
 CXX			=	c++
 CXXFLAGS	=	-std=c++98 -Wall -Wextra -Werror -I$(HDIR) -MMD -MP

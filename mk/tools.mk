@@ -1,7 +1,7 @@
 check:
 	cppcheck --inconclusive --std=c++98 src/ include/
 
-compiledb:
+cdb compiledb:
 	@compiledb make -n $(NAME) build_tests > /dev/null 2>&1
 
 v valgrind:
@@ -13,3 +13,6 @@ i init:
 doxy:
 	@test -f doxy/Doxyfile || (doxygen -g && cat doxy/Doxyfile.template > doxy/Doxyfile)
 	@doxygen doxy/Doxyfile
+
+docker:
+	@docker compose up --build
