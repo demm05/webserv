@@ -48,4 +48,4 @@ re: fclean
 -include $(DEPS)
 -include $(TEST_DEPS)
 
-.PHONY: all build c clean f fclean re check v valgrind r run rr rerun init doc
+.PHONY: all build c clean f fclean re r run rr rerun

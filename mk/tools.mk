@@ -11,8 +11,10 @@ i init:
 	@git submodule update --init --remote --recursive
 
 doxy:
-	@test -f doxy/Doxyfile || (doxygen -g && cat doxy/Doxyfile.template > doxy/Doxyfile)
+	@test -f doxy/Doxyfile || (doxygen -g doxy/Doxyfile && cat doxy/Doxyfile.template > doxy/Doxyfile)
 	@doxygen doxy/Doxyfile
 
-docker:
+compose:
 	@docker compose up --build
+
+.PHONY: check cdb compiledb v valgrind i init doxy compose

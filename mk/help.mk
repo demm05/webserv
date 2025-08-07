@@ -37,7 +37,7 @@ help:
 	@echo "  $(GREEN)check$(RESET)        Run static analysis with cppcheck."
 	@echo "  $(GREEN)cdb, compiledb$(RESET)    Generate compile_commands.json for your editor."
 	@echo "  $(GREEN)doxy$(RESET)         Doxygen."
-	@echo "  $(GREEN)docker$(RESET)       Builds the app and runs it with docker-compose.\n"
+	@echo "  $(GREEN)compose$(RESET)       Builds the app and runs it with docker-compose.\n"
 	@echo "$(YELLOW)⚙️  Run Options:$(RESET)"
 	@echo "  $(GREEN)ARGS=$(RESET)        Pass arguments to the executable."
 	@echo "               e.g., make run ARGS=\"config/default.conf\""
