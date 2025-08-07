@@ -1,0 +1,6 @@
+PROJECT_NAME           = "Webserv"
+OUTPUT_DIRECTORY       = doxy
+INPUT                  = inc src
+RECURSIVE              = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
