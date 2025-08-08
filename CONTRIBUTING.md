@@ -1,65 +1,90 @@
-# Contributing to webserv
+# Contributing to Webserv
 
-Welcome to the team! To ensure our collaboration is smooth and effective, please follow these guidelines. A consistent workflow helps us build better software, faster.
+This document outlines our development workflow and coding standards.
+Following these guidelines ensures code quality and demonstrates professional development practices.
 
-## The Core Workflow: From Issue to Merge
+## Development Workflow
 
-Our workflow is centered around **GitHub Issues**. Every new feature, bug fix, or chore starts as an issue.
+### 1. Issues and Planning
 
-1.  **Create or Claim an Issue:**
-    * Before writing any code, create a new issue on GitHub to describe the task. This lets everyone know what's being worked on.
-    * If you're starting work on an existing issue, assign it to yourself or leave a comment.
+All work starts with a GitHub Issue.
+This ensures we track progress and avoid duplicate effort.
 
-2.  **Create a Branch:**
-    * Create a descriptive branch for your task, prefixed with your initials.
-    * Always branch from the most recent `main` branch.
+**Issue titles** should use type prefixes:
+- `feat`: New feature
+- `fix`: Bug fix
+- `refactor`: Code improvement without functional changes
+- `docs`: Documentation updates
+- `test`: Adding or improving tests
 
-    ```bash
-    # Make sure your local main is up-to-date
-    git checkout main
-    git pull origin main
+**Example**: `feat: Implement HTTP request parsing`
 
-    # Create your new branch
-    # Format: <initials>/<issue-number>-<short-description>
-    git checkout -b ab/12-implement-request-parser
-    ```
+### 2. Branching Strategy
 
-3.  **Code & Commit:**
-    * Write your code, following the project's [CODING_STYLE.md](CODING_STYLE.md).
-    * Commit your changes using the **Conventional Commits** format.
+Create feature branches from `main` using the format:
+```
+type/issue-number-description
+```
 
-    ```bash
-    # Example commit
-    git add src/http/request_parser.cpp include/http/request_parser.hpp
-    git commit -m "feat(parser): add basic HTTP request line parsing"
-    ```
+**Example**: `feat/12-http-parser`
 
-4.  **Open a Pull Request (PR):**
-    * Push your branch to GitHub and open a Pull Request to merge into the `main` branch.
-    * In the PR description, link the issue it resolves by writing `Closes #12`.
-    * Fill out the PR template to describe your changes.
+### 3. Commit Messages
 
-5.  **Review & Merge:**
-    * At least one other team member must review the PR.
-    * Once the PR is approved, the author can merge it into `main` using **Squash and merge**.
-    * Delete the branch after merging.
+Use clear, descriptive commit messages:
+```
+type(scope): brief description
 
-## Commit Conventions
+Optional longer explanation if needed.
+```
 
-We use **Conventional Commits**: `<type>(<scope>): <subject>`
+**Examples**:
+```bash
+git commit -m "feat(parser): Add HTTP method validation"
+git commit -m "fix(server): Handle SIGPIPE in connection cleanup"
+git commit -m "refactor(config): Simplify directive parsing logic"
+```
 
-* **`feat`**: A new feature.
-* **`fix`**: A bug fix.
-* **`chore`**: Routine tasks (build process, etc).
-* **`docs`**: Documentation changes.
-* **`style`**: Formatting changes.
-* **`refactor`**: Code changes that neither fix a bug nor add a feature.
-* **`test`**: Adding or correcting tests.
+### 4. Pull Requests
 
-## Communication
+Before opening a PR:
+1. Format code with `clang-format`
+2. Ensure all tests pass
+3. Update documentation if needed
 
-* **Tasks & Bugs:** Use **GitHub Issues**.
-* **Code-Specific Discussion:** Use **Pull Request comments**.
-* **Quick Questions & General Chat:** Use **Slack**.
+**PR description should include**:
+- Link to the issue: `Closes #12`
+- Brief summary of changes
+- Testing instructions if applicable
 
-Happy coding! ✨
+**Review process**:
+- At least one team member must review and approve
+- Address feedback constructively
+- Merge after approval and delete the feature branch
+
+## Code Standards
+
+### Quality Requirements
+
+- Follow the style guide in `CODING_STYLE.md`
+- Document public interfaces (see `DOCUMENTATION.md`)
+- Write meaningful variable and function names
+- Keep functions focused and under 30 lines when possible
+
+### Testing
+
+- Write tests for new features and bug fixes
+- Ensure existing tests continue to pass
+- Test both success and error cases
+
+### C++98 Compliance
+
+- No external libraries beyond standard library
+- Implement Rule of Three for resource-managing classes
+- Use non-blocking I/O patterns throughout
+
+### Recommended IDE Settings
+
+- 4-space indentation (no tabs)
+- Format on save
+- Show trailing whitespace
+- C++98 syntax highlighting
