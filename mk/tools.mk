@@ -1,5 +1,5 @@
 check:
-	cppcheck --inconclusive --std=c++98 src/ include/
+	cppcheck --enable=all --inconclusive --suppress=missingIncludeSystem --suppress=missingInclude --std=c++98 src/ inc/
 
 cdb compiledb:
 	@compiledb make -n $(NAME) build_tests > /dev/null 2>&1

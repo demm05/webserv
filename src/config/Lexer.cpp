@@ -1,14 +1,21 @@
 #include "Lexer.hpp"
 #include <iostream>
 
-Lexer::Lexer(std::string const &content, std::vector<Token> &res)
+Lexer::Lexer(std::string const &content, TokenArray &res)
     : content_(content), tokens_(res), pos_(0), ch_(0) {
     readChar();
 }
 
-void Lexer::tokenize(std::string const &content, std::vector<Token> &res) {
+void Lexer::tokenize(std::string const &content, TokenArray &res) {
     Lexer lex(content, res);
     lex.run();
+}
+
+TokenArray Lexer::tokenize(std::string const &content) {
+    TokenArray arr;
+    Lexer lex(content, arr);
+    lex.run();
+    return arr;
 }
 
 void Lexer::run() {
@@ -25,7 +32,7 @@ void Lexer::run() {
         else
             handleUnknown();
     }
-    pushToken(END_OF_FILE, ""); 
+    pushToken(END_OF_FILE, "");
 }
 
 void Lexer::handleComment() {
