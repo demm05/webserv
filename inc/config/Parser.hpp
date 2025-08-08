@@ -1,7 +1,7 @@
 #pragma once
 
+#include "ConfigNode.hpp"
 #include "Lexer.hpp"
-#include "ServerConfig.hpp"
 
 /* GRAMMAR in EBNF
  * 	config_file = { server_block } ;
@@ -13,17 +13,15 @@
  */
 
 class Parser {
-public:
-    static ServerConfig parseFile(char const *fpath);
-
 private:
     std::string content_;
-    ServerConfig config_;
-    Lexer::TokenArray tokens_;
+    ConfigNode nodes_;
+    TokenArray tokens_;
     size_t pos_;
 
+    Parser();
     Parser(char const *fpath);
-    void run();
+    void parseIt();
     size_t size() const;
 
     Token const &currentToken() const;
@@ -31,11 +29,12 @@ private:
     void consumeToken();
     void expectToken(TokenType type);
     void expectToken(std::string literal);
+    bool isTokenAValue() const;
+    void displayCurrentToken() const;
+    void addDirective(ConfigNode &node, DirectivePair const &pair) const;
 
     void handleServerBlock();
     void handleStatement();
-    void handleDirective(DirectiveBlock &);
     void handleLocationBlock();
-    void displayCurrentToken() const;
-    bool isTokenAValue() const;
+    DirectivePair handleDirective();
 };

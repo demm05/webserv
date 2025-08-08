@@ -1,22 +1,18 @@
 #pragma once
 
+#include <vector>
+#include <string>
+#include <map>
+
 #include "LocationBlock.hpp"
-#include "DirectiveBlock.hpp"
+#include "ConfigBuilder.hpp"
 
-class ServerConfig : public DirectiveBlock {
+class ServerConfig {
 public:
-    ServerConfig();
-    void setPort(int port);
-    void addServerName(std::string const &name);
-    void addLocation(std::string const &path, LocationBlock const &location);
-
-    int getPort() const;
-    bool getLocation(std::string const &path, LocationBlock const **out_loc) const;
-    LocationBlock const &getLocation(std::string const &path) const;
-
 private:
-    typedef std::map<std::string, LocationBlock> LocationMap;
-    std::vector<std::string> names_;
-    LocationMap locations_;
+    friend class ConfigBuilder;
+
     int port_;
+    std::vector<std::string> serverNames_;
+    std::map<std::string, LocationBlock> locations_;
 };

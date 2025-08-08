@@ -4,10 +4,12 @@
 
 #include <vector>
 
+typedef std::vector<Token> TokenArray;
+
 class Lexer {
 public:
-    typedef std::vector<Token> TokenArray;
     static void tokenize(std::string const &content, TokenArray &res);
+    static TokenArray tokenize(std::string const &content);
     static void printTokens(TokenArray const &tokens);
 
 private:

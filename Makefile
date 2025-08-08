@@ -1,5 +1,5 @@
 NAME		=	webserv
-ARGS		?=
+ARGS		?=	config/example.conf
 # =============================== DIRECTORIES ================================ #
 HDIR		=	inc
 ODIR		=	obj
