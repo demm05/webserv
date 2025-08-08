@@ -1,11 +1,18 @@
 #pragma once
 
-#include "Token.hpp"
-
 #include <vector>
+#include "Token.hpp"
 
 typedef std::vector<Token> TokenArray;
 
+/**
+ * @class Lexer
+ * @brief A static utility class that performs lexical analysis on a config string.
+ *
+ * The Lexer breaks down a raw string into a sequence of Tokens, which can then
+ * be consumed by the Parser. It handles basic elements like keywords, strings,
+ * numbers, and punctuation, ignoring whitespace and comments.
+ */
 class Lexer {
 public:
     static void tokenize(std::string const &content, TokenArray &res);

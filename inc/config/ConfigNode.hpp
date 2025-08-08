@@ -12,6 +12,14 @@ typedef std::map<std::string, DirectiveArgs> DirectiveMap;
 typedef std::pair<std::string, DirectiveArgs> DirectivePair;
 typedef std::vector<ConfigNode> ChildrenVec;
 
+/**
+ * @class ConfigNode
+ * @brief A generic node representing a block in the configuration file.
+ *
+ * This class serves as the Intermediate Representation (IR) of the config file.
+ * Each ConfigNode can represent a block like 'server' or 'location', holding
+ * its own directives and any nested child blocks.
+ */
 class ConfigNode {
 public:
     ConfigNode() {
