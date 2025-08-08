@@ -1,4 +1,4 @@
-# Contributing to Webserv
+# Contributing to ServerX
 
 This document outlines our development workflow and coding standards.
 Following these guidelines ensures code quality and demonstrates professional development practices.

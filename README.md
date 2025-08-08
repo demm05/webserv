@@ -1,4 +1,4 @@
-# Webserv
+# ServerX
 
 A lightweight HTTP/1.1 server implementation in C++98.
 

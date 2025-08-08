@@ -1,4 +1,4 @@
-# Webserv Coding Style Guide
+# Coding Style Guide
 
 This document outlines the coding style for the `webserv` project.
 All code must comply with the **C++98 standard** as required by the project subject.
