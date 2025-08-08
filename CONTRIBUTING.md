@@ -7,7 +7,11 @@ Following these guidelines ensures code quality and demonstrates professional de
 
 ### 1. Issues and Planning
 
-All work starts with a GitHub Issue.
+All work starts with a GitHub Issue. Please follow the issue template and write a better issue for you and your teammate. Also remember check the project details to see what our sprint goal for the current sprint. 
+
+Each issue is a ticket. Each Epic is a feature/sub-project within a project. e.g. (Web server is a project - Add reactor design pattern is a feature within the project) 
+
+You can create a issue in draft state to demonstrate this is a rough idea - may or may not be helpful to the state of the project. When you have a better understanding of the idea and plans to achieve, then you convert it into an issue and move it to ready. When you decide to work on it in a sprint, you move it in In Progress.
 This ensures we track progress and avoid duplicate effort.
 
 **Issue titles** should use type prefixes:
@@ -60,6 +64,8 @@ Before opening a PR:
 - At least one team member must review and approve
 - Address feedback constructively
 - Merge after approval and delete the feature branch
+
+Tips: when you summit Pull Request, you can send a message to the channel we are using for asking people to review so your work won't be blocked  
 
 ## Code Standards
 

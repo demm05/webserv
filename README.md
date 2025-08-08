@@ -4,13 +4,13 @@ A lightweight HTTP/1.1 server implementation in C++98.
 
 ## Overview
 
-Webserv is a non-blocking HTTP server that handles multiple clients simultaneously using I/O multiplexing.
+ServerX is a non-blocking HTTP server that handles multiple clients simultaneously using I/O multiplexing.
 The server supports basic HTTP operations, static file serving, and CGI execution.
 
 ## Features
 
 - HTTP/1.1 protocol support
-- Non-blocking I/O with `poll()`/`select()`/`kqueue()`
+- Non-blocking I/O with `epoll()`/`poll()`/`select()`/`kqueue()`
 - Multiple server configurations
 - Static file serving
 - CGI script execution
