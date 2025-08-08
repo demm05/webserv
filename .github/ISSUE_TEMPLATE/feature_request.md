@@ -16,4 +16,5 @@ Why is this task necessary? Provide a little context. Is it part of a bigger fea
 ### ✅ Acceptance Criteria
 A checklist of conditions that **must** be met for the task to be considered complete.
 
-- [ ] A specific condition that must be true.
+- [ ] The new feature passes all unit tests
+- [ ] Documentation is updated to reflect the new functionality
