@@ -21,6 +21,6 @@ WORKDIR /app
 
 COPY --from=builder /app/webserv .
 
-EXPOSE 443
+COPY ./config/example.conf /etc/webserv/config.conf
 
-CMD ["./webserv"]
+CMD ["./webserv", "/etc/webserv/config.conf"]

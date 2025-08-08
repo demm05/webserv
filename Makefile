@@ -1,5 +1,5 @@
 NAME		=	webserv
-ARGS		?=
+ARGS		?=	config/example.conf
 # =============================== COMPILATION ================================ #
 CXX			=	c++
 CXXFLAGS	=	-std=c++98 -Wall -Wextra -Werror -I$(HDIR) -MMD -MP
@@ -48,4 +48,4 @@ re: fclean
 -include $(DEPS)
 -include $(TEST_DEPS)
 
-.PHONY: all build c clean f fclean re check v valgrind r run rr rerun init doc
+.PHONY: all build c clean f fclean re r run rr rerun
