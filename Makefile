@@ -13,6 +13,7 @@ OBJS		:=	$(patsubst $(SDIR)/%.cpp,$(ODIR)/%.o,$(SRCS))
 DEPS		:=	$(patsubst %.o,%.d,$(OBJS))
 DIRS		=	$(sort $(dir $(OBJS)))
 # ================================= INCLUDES ================================= #
+INCLUDE		:=	./inc
 include mk/tools.mk
 include mk/options.mk
 include mk/help.mk
@@ -22,7 +23,7 @@ all:
 	@$(FMAKE) $(NAME)
 
 $(NAME): $(OBJS)
-	@$(CXX) $(CXXFLAGS) $^ -o $@
+	@$(CXX) $(CXXFLAGS) $^ -o $@ -I $(INCLUDE)
 
 $(OBJS): $(ODIR)/%.o: $(SDIR)/%.cpp | $(DIRS)
 	@$(CXX) $(CXXFLAGS) -c -o $@ $<
