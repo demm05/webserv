@@ -19,6 +19,14 @@ public:
     static std::vector<ServerConfig> build(ConfigNodeVec const &);
 
 private:
+    typedef void (ConfigBuilder::*ServerDirectiveHandler)(ServerConfig &, const DirectiveArgs &);
+    typedef std::map<std::string, ServerDirectiveHandler> ServerHandlerMap;
+    typedef void (ConfigBuilder::*LocationDirectiveHandler)(LocationBlock &, const DirectiveArgs &);
+    typedef std::map<std::string, LocationDirectiveHandler> LocationHandlerMap;
+
+    const ServerHandlerMap &getServerDirectiveHandlers();
+    const LocationHandlerMap &getLocationDirectiveHandlers();
+
     ServerConfig buildServer(ConfigNode const &server_node);
     void buildServerDirectives(ServerConfig &conf, DirectiveMap const &);
     void buildServerChildren(ServerConfig &conf, ConfigNodeVec const &);

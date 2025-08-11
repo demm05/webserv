@@ -1,21 +1,37 @@
-#include "ConfigBuilder.hpp"
 #include <stdexcept>
 #include <iostream>
+#include "ConfigException.hpp"
+#include "ConfigBuilder.hpp"
 
 namespace config {
 
+ConfigBuilder::ServerHandlerMap const &ConfigBuilder::getServerDirectiveHandlers() {
+    static ServerHandlerMap map;
+    if (!map.empty())
+        return map;
+    map["listen"] = &ConfigBuilder::handleListen;
+    map["server_name"] = &ConfigBuilder::handleServerName;
+    return map;
+}
+
+ConfigBuilder::LocationHandlerMap const &ConfigBuilder::getLocationDirectiveHandlers() {
+    static LocationHandlerMap map;
+    if (!map.empty())
+        return map;
+    map["root"] = &ConfigBuilder::handleRoot;
+    map["index"] = &ConfigBuilder::handleIndex;
+    return map;
+}
+
 ServerConfigVec ConfigBuilder::build(ConfigNodeVec const &nodes) {
-    static ConfigBuilder cf;
-
     if (nodes.empty())
-        throw std::runtime_error("config file is empty");
-
+        throw ConfigError("config file is empty");
     ServerConfigVec v;
     v.reserve(nodes.size());
+    ConfigBuilder cf;
     for (size_t i = 0; i < nodes.size(); i++) {
         v.push_back(cf.buildServer(nodes[i]));
     }
-
     return v;
 }
 
@@ -29,19 +45,13 @@ ServerConfig ConfigBuilder::buildServer(ConfigNode const &node) {
 }
 
 void ConfigBuilder::buildServerDirectives(ServerConfig &conf, DirectiveMap const &directives) {
-    typedef void (ConfigBuilder::*DirectiveHandler)(ServerConfig &, DirectiveArgs const &);
-    typedef std::map<std::string, DirectiveHandler> DirectiveHandlerMap;
-
-    DirectiveHandlerMap server_handlers;
-    server_handlers["listen"] = &ConfigBuilder::handleListen;
-    server_handlers["server_name"] = &ConfigBuilder::handleServerName;
-
-    for (DirectiveMap::const_iterator it = directives.begin(); it != directives.end(); it++) {
+    ServerHandlerMap handlers = getServerDirectiveHandlers();
+    for (DirectiveMap::const_iterator it = directives.begin(); it != directives.end(); ++it) {
+        ServerHandlerMap::const_iterator handler;
         std::string const &name = it->first;
-
-        DirectiveHandlerMap::const_iterator handler = server_handlers.find(name);
-        if (handler == server_handlers.end())
-            throw std::runtime_error("unknown directive '" + name + "' in server block");
+        handler = handlers.find(name);
+        if (handler == handlers.end())
+            throw ConfigError("unknown directive '" + name + "' in server block");
         (this->*handler->second)(conf, it->second);
     }
 }
@@ -53,10 +63,10 @@ void ConfigBuilder::buildServerChildren(ServerConfig &conf, ConfigNodeVec const 
     NodeHandlerMap handlers;
     handlers["location"] = &ConfigBuilder::buildLocation;
 
-    for (ConfigNodeVec::const_iterator it = nodes.begin(); it != nodes.end(); it++) {
+    for (ConfigNodeVec::const_iterator it = nodes.begin(); it != nodes.end(); ++it) {
         NodeHandlerMap::const_iterator handler = handlers.find(it->name);
         if (handler == handlers.end()) {
-            throw std::runtime_error("unknown block '" + it->name + "' in server block'");
+            throw ConfigError("unknown block '" + it->name + "' in server block'");
         }
         (this->*handler->second)(conf, *it);
     }
@@ -64,27 +74,22 @@ void ConfigBuilder::buildServerChildren(ServerConfig &conf, ConfigNodeVec const 
 
 void ConfigBuilder::buildLocation(ServerConfig &conf, ConfigNode const &node) {
     if (node.args.size() != 1) {
-        throw std::runtime_error("location block requires exactly 1 path argument");
+        throw ConfigError("location block requires exactly 1 path argument");
     }
     LocationBlock loc;
     loc.path = node.args[0];
     if (conf.locations_.count(loc.path) > 0) {
-        std::cerr << "Warning: Duplicate location '" << loc.path
-                  << "' in server block. Ignoring subsequent definition." << std::endl;
+        issue_warning("Duplicate location '" + loc.path + "' in server block.");
         return;
     }
 
-    typedef void (ConfigBuilder::*DirectiveHandler)(LocationBlock &, DirectiveArgs const &);
-    typedef std::map<std::string, DirectiveHandler> DirectiveHandlerMap;
-    DirectiveHandlerMap handlers;
-    handlers["root"] = &ConfigBuilder::handleRoot;
-    handlers["index"] = &ConfigBuilder::handleIndex;
-
+    LocationHandlerMap handlers = getLocationDirectiveHandlers();
     DirectiveMap const &directives = node.directives;
-    for (DirectiveMap::const_iterator it = directives.begin(); it != directives.end(); it++) {
-        DirectiveHandlerMap::const_iterator handler = handlers.find(it->first);
+    for (DirectiveMap::const_iterator it = directives.begin(); it != directives.end(); ++it) {
+        LocationHandlerMap::const_iterator handler;
+        handler = handlers.find(it->first);
         if (handler == handlers.end()) {
-            throw std::runtime_error("unknown directive '" + it->first + "' in server block");
+            throw ConfigError("unknown directive '" + it->first + "' in server block");
         }
         (this->*handler->second)(loc, it->second);
     }
