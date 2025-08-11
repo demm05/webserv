@@ -1,6 +1,8 @@
 #include "Lexer.hpp"
 #include <iostream>
 
+using namespace config;
+
 Lexer::Lexer(std::string const &content, TokenArray &res)
     : content_(content), tokens_(res), pos_(0), ch_(0) {
     readChar();

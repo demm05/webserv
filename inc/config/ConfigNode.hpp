@@ -5,12 +5,14 @@
 #include <string>
 #include <utility>
 
+namespace config {
+
 class ConfigNode;
 
 typedef std::vector<std::string> DirectiveArgs;
 typedef std::map<std::string, DirectiveArgs> DirectiveMap;
 typedef std::pair<std::string, DirectiveArgs> DirectivePair;
-typedef std::vector<ConfigNode> ChildrenVec;
+typedef std::vector<ConfigNode> ConfigNodeVec;
 
 /**
  * @class ConfigNode
@@ -31,5 +33,7 @@ public:
     std::string name;
     DirectiveArgs args;
     DirectiveMap directives;
-    ChildrenVec children;
+    ConfigNodeVec children;
 };
+
+} // namespace config

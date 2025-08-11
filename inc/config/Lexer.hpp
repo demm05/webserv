@@ -3,6 +3,8 @@
 #include <vector>
 #include "Token.hpp"
 
+namespace config {
+
 typedef std::vector<Token> TokenArray;
 
 /**
@@ -41,3 +43,5 @@ private:
     void handleUnknown();
     void handlePunctuation();
 };
+
+} // namespace config

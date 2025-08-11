@@ -1,12 +1,14 @@
 #include <iostream>
 #include <exception>
-#include "Parser.hpp"
+#include "ConfigFileLoader.hpp"
+
+using config::ConfigFileLoader;
 
 void parsee(int num_of_configs, char const **configs) {
     (void)configs;
     for (int i = 0; i < num_of_configs; i++) {
         try {
-            // Parser::parseFile(configs[i]);
+            ConfigFileLoader::load(configs[i]);
         } catch (std::exception const &e) {
             std::cerr << "Error: " << e.what() << std::endl;
         };

@@ -1,5 +1,10 @@
 #pragma once
 
+#include "ConfigNode.hpp"
+#include "ServerConfig.hpp"
+
+namespace config {
+
 /**
  * @class ConfigBuilder
  * @brief Constructs the final, strongly-typed configuration from a generic parse tree.
@@ -9,4 +14,21 @@
  * and populates the final ServerConfig and LocationBlock objects. It bridges the
  * gap between syntax and a usable configuration.
  */
-class ConfigBuilder {};
+class ConfigBuilder {
+public:
+    static std::vector<ServerConfig> build(ConfigNodeVec const &);
+
+private:
+    ServerConfig buildServer(ConfigNode const &server_node);
+    void buildServerDirectives(ServerConfig &conf, DirectiveMap const &);
+    void buildServerChildren(ServerConfig &conf, ConfigNodeVec const &);
+
+    void buildLocation(ServerConfig &conf, ConfigNode const &);
+
+    void handleListen(ServerConfig &, DirectiveArgs const &);
+    void handleServerName(ServerConfig &, DirectiveArgs const &);
+    void handleRoot(LocationBlock &, DirectiveArgs const &);
+    void handleIndex(LocationBlock &, DirectiveArgs const &);
+};
+
+} // namespace config

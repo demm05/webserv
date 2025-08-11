@@ -1,6 +1,8 @@
 #include "Token.hpp"
 #include <iostream>
 
+namespace config {
+
 static char const *getTokenTypeStr(TokenType t) {
     // clang-format off
     switch (t) {
@@ -18,13 +20,13 @@ static char const *getTokenTypeStr(TokenType t) {
     // clang-format on
 }
 
-std::ostream &operator<<(std::ostream &o, TokenType t) {
+std::ostream &operator<<(std::ostream &o, TokenType const t) {
     o << getTokenTypeStr(t);
     return o;
 }
 
 std::ostream &operator<<(std::ostream &o, Token const &t) {
-    std::cout << "T (" << t.literal << "), (" << t.type << ");";
+    o << "T (" << t.literal << "), (" << t.type << ");";
     return o;
 }
 
@@ -37,3 +39,5 @@ bool Token::isTypeIn(TokenType const arr[], size_t size) const {
     }
     return false;
 }
+
+} // namespace config

@@ -12,6 +12,8 @@
  *	parameter = IDENTIFIER | STRING | NUMBER ;
  */
 
+namespace config {
+
 /**
  * @class Parser
  * @brief Performs syntax analysis on a stream of tokens to build a configuration tree.
@@ -25,15 +27,16 @@
  * Semantic errors (e.g., invalid port number) are handled by the ConfigBuilder.
  */
 class Parser {
+public:
+    static std::vector<ConfigNode> parse(TokenArray const &);
+
 private:
-    std::string content_;
-    ConfigNode nodes_;
-    TokenArray tokens_;
+    std::vector<ConfigNode> nodes_;
+    TokenArray const &tokens_;
     size_t pos_;
 
     Parser();
-    Parser(char const *fpath);
-    void parseIt();
+    Parser(TokenArray const &);
     size_t size() const;
 
     Token const &currentToken() const;
@@ -50,3 +53,5 @@ private:
     void handleLocationBlock();
     DirectivePair handleDirective();
 };
+
+} // namespace config

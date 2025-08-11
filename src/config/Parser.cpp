@@ -1,28 +1,15 @@
 #include "Parser.hpp"
-#include <fstream>
-#include <sstream>
 
-Parser::Parser(char const *fpath) : pos_(0) {
-    (void)fpath;
-    // std::ifstream infile(fpath);
-    // if (!infile.is_open())
-    //     throw std::runtime_error("`" + std::string(fpath) + "`: cannot be opened");
-    // std::stringstream buffer;
-    // buffer << infile.rdbuf();
-    // content_ = buffer.str();
-    // infile.close();
+using namespace config;
+
+Parser::Parser(TokenArray const &tokens) : tokens_(tokens), pos_(0) {
+    nodes_.reserve(2);
 }
 
-// ServerConfig Parser::parseFile(char const *fpath) {
-//     Parser parser(fpath);
-//     parser.run();
-//     return parser.config_;
-// }
-
-void Parser::parseIt() {
-    Lexer::tokenize(content_, tokens_);
-    Lexer::printTokens(tokens_);
-    handleServerBlock();
+std::vector<ConfigNode> Parser::parse(TokenArray const &tokens) {
+    Parser parser(tokens);
+    parser.handleServerBlock();
+    return parser.nodes_;
 }
 
 size_t Parser::size() const {
@@ -80,6 +67,7 @@ void Parser::handleServerBlock() {
     while (currentToken().type != END_OF_FILE) {
         expectToken("server");
         expectToken(LEFT_BRACE);
+        nodes_.push_back(ConfigNode("server"));
         while (currentToken().type != RIGHT_BRACE)
             handleStatement();
         expectToken(RIGHT_BRACE);
@@ -87,11 +75,10 @@ void Parser::handleServerBlock() {
 }
 
 void Parser::handleStatement() {
-    DirectivePair dp;
     if (currentToken().literal == "location")
         handleLocationBlock();
     else
-        addDirective(nodes_, handleDirective());
+        addDirective(nodes_.back(), handleDirective());
 }
 
 void Parser::handleLocationBlock() {
@@ -109,7 +96,7 @@ void Parser::handleLocationBlock() {
     while (currentToken().type != RIGHT_BRACE)
         addDirective(node, handleDirective());
     expectToken(RIGHT_BRACE);
-    nodes_.children.push_back(node);
+    nodes_.back().children.push_back(node);
 }
 
 DirectivePair Parser::handleDirective() {

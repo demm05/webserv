@@ -5,7 +5,8 @@
 #include <map>
 
 #include "LocationBlock.hpp"
-#include "ConfigBuilder.hpp"
+
+namespace config {
 
 /**
  * @class ServerConfig
@@ -16,7 +17,6 @@
  * configuration used by the webserver at runtime.
  */
 class ServerConfig {
-public:
 private:
     friend class ConfigBuilder;
 
@@ -24,3 +24,7 @@ private:
     std::vector<std::string> serverNames_;
     std::map<std::string, LocationBlock> locations_;
 };
+
+typedef std::vector<ServerConfig> ServerConfigVec;
+
+} // namespace config

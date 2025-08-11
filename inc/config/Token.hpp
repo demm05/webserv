@@ -3,6 +3,8 @@
 #include <string>
 #include <ostream>
 
+namespace config {
+
 /**
  * @enum TokenType
  * @brief Represents the type of a lexical token.
@@ -37,4 +39,6 @@ typedef struct Token {
 } Token;
 
 std::ostream &operator<<(std::ostream &o, Token const &t);
-std::ostream &operator<<(std::ostream &o, TokenType t);
+std::ostream &operator<<(std::ostream &o, TokenType const t);
+
+} // namespace config
