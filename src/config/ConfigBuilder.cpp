@@ -1,5 +1,4 @@
 #include <stdexcept>
-#include <iostream>
 #include "ConfigException.hpp"
 #include "ConfigBuilder.hpp"
 
@@ -23,28 +22,28 @@ ConfigBuilder::LocationHandlerMap const &ConfigBuilder::getLocationDirectiveHand
     return map;
 }
 
-ServerConfigVec ConfigBuilder::build(ConfigNodeVec const &nodes) {
+ServerBlockVec ConfigBuilder::build(ConfigNodeVec const &nodes) {
     if (nodes.empty())
         throw ConfigError("config file is empty");
-    ServerConfigVec v;
-    v.reserve(nodes.size());
-    ConfigBuilder cf;
+
+    ConfigBuilder cb;
+    cb.servers_.reserve(nodes.size());
     for (size_t i = 0; i < nodes.size(); i++) {
-        v.push_back(cf.buildServer(nodes[i]));
+        cb.buildServer(nodes[i]);
     }
-    return v;
+    return cb.servers_;
 }
 
-ServerConfig ConfigBuilder::buildServer(ConfigNode const &node) {
+void ConfigBuilder::buildServer(ConfigNode const &node) {
     if (node.name != "server")
         throw std::runtime_error("ConfigBuilder unexpected call of buildServer non matching name");
-    ServerConfig cf;
+    ServerBlock cf;
     buildServerDirectives(cf, node.directives);
     buildServerChildren(cf, node.children);
-    return cf;
+    servers_.push_back(cf);
 }
 
-void ConfigBuilder::buildServerDirectives(ServerConfig &conf, DirectiveMap const &directives) {
+void ConfigBuilder::buildServerDirectives(ServerBlock &conf, DirectiveMap const &directives) {
     ServerHandlerMap handlers = getServerDirectiveHandlers();
     for (DirectiveMap::const_iterator it = directives.begin(); it != directives.end(); ++it) {
         ServerHandlerMap::const_iterator handler;
@@ -56,8 +55,8 @@ void ConfigBuilder::buildServerDirectives(ServerConfig &conf, DirectiveMap const
     }
 }
 
-void ConfigBuilder::buildServerChildren(ServerConfig &conf, ConfigNodeVec const &nodes) {
-    typedef void (ConfigBuilder::*NodeHandler)(ServerConfig &, ConfigNode const &);
+void ConfigBuilder::buildServerChildren(ServerBlock &conf, ConfigNodeVec const &nodes) {
+    typedef void (ConfigBuilder::*NodeHandler)(ServerBlock &, ConfigNode const &);
     typedef std::map<std::string, NodeHandler> NodeHandlerMap;
 
     NodeHandlerMap handlers;
@@ -72,14 +71,15 @@ void ConfigBuilder::buildServerChildren(ServerConfig &conf, ConfigNodeVec const 
     }
 }
 
-void ConfigBuilder::buildLocation(ServerConfig &conf, ConfigNode const &node) {
+void ConfigBuilder::buildLocation(ServerBlock &conf, ConfigNode const &node) {
     if (node.args.size() != 1) {
         throw ConfigError("location block requires exactly 1 path argument");
     }
     LocationBlock loc;
     loc.path = node.args[0];
     if (conf.locations_.count(loc.path) > 0) {
-        issue_warning("Duplicate location '" + loc.path + "' in server block.");
+        issue_warning("Duplicate location '" + loc.path +
+                      "' in location block. Ignoring subsequent directives.");
         return;
     }
 
@@ -96,21 +96,25 @@ void ConfigBuilder::buildLocation(ServerConfig &conf, ConfigNode const &node) {
     conf.locations_[loc.path] = loc;
 }
 
-void ConfigBuilder::handleListen(ServerConfig &cfg, DirectiveArgs const &) {
-    std::cout << "Listen caller" << std::endl;
+void ConfigBuilder::handleListen(ServerBlock &cfg, DirectiveArgs const &args) {
+    if (args.size() == 0) {
+        issue_warning("No port specified for the 'listen' directive. Using default port.");
+    }
+    if (args.size() > 1) {
+        issue_warning(
+            "Multiple ports provided for the 'listen' directive. Only the first port specified (" +
+            args[0] + ") will be used.");
+    }
     cfg.port_ = 80;
 }
 
-void ConfigBuilder::handleServerName(ServerConfig &, DirectiveArgs const &) {
-    std::cout << "ServerName caller" << std::endl;
+void ConfigBuilder::handleServerName(ServerBlock &, DirectiveArgs const &) {
 }
 
 void ConfigBuilder::handleRoot(LocationBlock &, DirectiveArgs const &) {
-    std::cout << "handleRoot caller" << std::endl;
 }
 
 void ConfigBuilder::handleIndex(LocationBlock &, DirectiveArgs const &) {
-    std::cout << "handleIndex caller" << std::endl;
 }
 
 } // namespace config

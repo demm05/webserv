@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ConfigNode.hpp"
-#include "ServerConfig.hpp"
+#include <ServerBlock.hpp>
 
 namespace config {
 
@@ -16,10 +16,12 @@ namespace config {
  */
 class ConfigBuilder {
 public:
-    static std::vector<ServerConfig> build(ConfigNodeVec const &);
+    static ServerBlockVec build(ConfigNodeVec const &);
 
 private:
-    typedef void (ConfigBuilder::*ServerDirectiveHandler)(ServerConfig &, const DirectiveArgs &);
+    ServerBlockVec servers_;
+
+    typedef void (ConfigBuilder::*ServerDirectiveHandler)(ServerBlock &, const DirectiveArgs &);
     typedef std::map<std::string, ServerDirectiveHandler> ServerHandlerMap;
     typedef void (ConfigBuilder::*LocationDirectiveHandler)(LocationBlock &, const DirectiveArgs &);
     typedef std::map<std::string, LocationDirectiveHandler> LocationHandlerMap;
@@ -27,14 +29,13 @@ private:
     const ServerHandlerMap &getServerDirectiveHandlers();
     const LocationHandlerMap &getLocationDirectiveHandlers();
 
-    ServerConfig buildServer(ConfigNode const &server_node);
-    void buildServerDirectives(ServerConfig &conf, DirectiveMap const &);
-    void buildServerChildren(ServerConfig &conf, ConfigNodeVec const &);
+    void buildServer(ConfigNode const &server_node);
+    void buildServerDirectives(ServerBlock &, DirectiveMap const &);
+    void buildServerChildren(ServerBlock &, ConfigNodeVec const &);
+    void buildLocation(ServerBlock &, ConfigNode const &);
 
-    void buildLocation(ServerConfig &conf, ConfigNode const &);
-
-    void handleListen(ServerConfig &, DirectiveArgs const &);
-    void handleServerName(ServerConfig &, DirectiveArgs const &);
+    void handleListen(ServerBlock &, DirectiveArgs const &);
+    void handleServerName(ServerBlock &, DirectiveArgs const &);
     void handleRoot(LocationBlock &, DirectiveArgs const &);
     void handleIndex(LocationBlock &, DirectiveArgs const &);
 };

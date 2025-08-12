@@ -1,10 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <map>
-
-#include "LocationBlock.hpp"
+#include "ServerBlock.hpp"
 
 namespace config {
 
@@ -17,14 +13,16 @@ namespace config {
  * configuration used by the webserver at runtime.
  */
 class ServerConfig {
+public:
+    ServerConfig(char const *fpath);
+
+    bool getServer(int port, std::string const &server_name, ServerBlock const *&res) const;
+    ServerBlock const *getServer(int port, std::string const &server_name) const;
+
 private:
     friend class ConfigBuilder;
 
-    int port_;
-    std::vector<std::string> serverNames_;
-    std::map<std::string, LocationBlock> locations_;
+    ServerBlockVec servers_; // TODO: Change CTL for performance
 };
-
-typedef std::vector<ServerConfig> ServerConfigVec;
 
 } // namespace config
