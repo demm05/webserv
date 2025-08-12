@@ -17,6 +17,11 @@ t test: | $(DOCTEST_DIR)
 
 build_tests: $(TEST_NAME)
 
+vt valgrind_test: | $(DOCTEST_DIR) $(LOGDIR)
+	@$(FMAKE) build_tests > /dev/null
+	@$(VALGRIND) ./$(TEST_NAME) -ni
+	@find $(LOGDIR) -name 'valgrind-*.log' -type f -empty -delete
+
 $(TEST_NAME): $(TEST_OBJS) $(PROJECT_OBJS_FOR_TESTS)
 	@$(CXX) $(TEST_CXXFLAGS) -o $@ $^
 

@@ -1,4 +1,5 @@
 MAKE	=	@make --no-print-directory
+VALGRIND	=	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 --quiet --log-file=$(LOGDIR)/valgrind-%p.log
 
 # For parallel compilation
 # $(info $(MAKEFLAGS))
