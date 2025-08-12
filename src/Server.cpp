@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include <stdexcept>
 
 Server::Server() : _listeningSocket(NULL) {
 }
@@ -16,9 +17,9 @@ void Server::run() {
         throw std::runtime_error("No socket set - call setupSocket() first");
     }
 
-    isRunning = true;
+    _isRunning = true;
     struct epoll_event events[1024];
-    _epollManger.addFd(listeningSocket->getFd(), EPOLLIN) while (_isRunning) {
+    _epollManager.addFd(listeningSocket->getFd(), EPOLLIN) while (_isRunning) {
         int nready = _epollManager.waitForEvents(events, 1024);
         if (nready < 0) {
             if (errno == EINTR)
@@ -46,7 +47,7 @@ void Server::handleNewConnection() {
     struct socketaddr_in clientAddr;
     socketlen_t addrLen = sizeof(clientAddr);
 
-    int clientFd = accept(listeningSocket->getFd(), (struct sockaddr *)&clientAddr, &addrLen);
+    int clientFd = accept(_listeningSocket->getFd(), (struct sockaddr *)&clientAddr, &addrLen);
     if (clientFd < 0) {
         return;
     }

@@ -9,7 +9,7 @@ int main(void) {
         Socket *socket = new Socket(9191);
         server.setupSocket(socket);
 
-        if (listen(socket.getFd(), 5) < 0) {
+        if (listen(socket->getFd(), 5) < 0) {
             delete socket;
             throw std::runtime_error("Faild to listen on socket");
         }

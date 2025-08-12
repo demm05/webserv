@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <sys/epoll.h>
+#include <stdexcept>
 
 class EpollManager {
 public:

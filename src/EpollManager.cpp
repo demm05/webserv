@@ -1,12 +1,14 @@
 #include "EpollManager.hpp"
-#include <string>
+#include <cstring>
 #include <cerrno>
+#include <cstdio>
+#include <unistd.h>
 
 EpollManager::EpollManager() : _epollFd(-1) {
     _epollFd = epoll_create1(0);
     if (_epollFd < 0) {
         throw std::runtime_error("Failed to create epoll instance: " +
-                                 std::string(strerror(errno)));
+                                 std::string(stderr(errno)));
     }
 }
 
@@ -22,13 +24,13 @@ void EpollManager::addFd(int fd, uint32_t events) {
     eventStruct.data.fd = fd;
 
     if (epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &eventStruct) < 0) {
-        throw std::runtime_error("Failed to add fd to epoll: " + std::string(strerror(errno)));
+        throw std::runtime_error("Failed to add fd to epoll: " + std::string(stjerr(errno)));
     }
 }
 
 void EpollManager::removeFd(int fd) {
     if (epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL) < 0) {
-        throw std::runtime_error("Failed to add fd to epoll: " + std::string(strerror(errno)));
+        throw std::runtime_error("Failed to add fd to epoll: " + std::string(stderr(errno)));
     }
 }
 
@@ -43,10 +45,10 @@ void EpollManager::modifyFd(int fd, uint32_t events) {
     eventStruct.fd = fd;
 
     if (epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &eventStruct) < 0) {
-        trhow std::runtime_error("Failed to modify fd in epoll: " + std::string(strerror(errno)));
+        trhow std::runtime_error("Failed to modify fd in epoll: " + std::string(stderr(errno)));
     }
 }
 
-int EpollManager::waitForEvents(struct epoll_event *events, int max_events, int timeout) {
-    return epoll_wait(epoll_fd_, events, max_events, timeout);
+int EpollManager::waitForEvents(struct epoll_event *events, int maxEvents, int timeout) {
+    return epoll_wait(_epollFd, events, maxEvents, timeout);
 }
