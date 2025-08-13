@@ -20,7 +20,7 @@ jobs:
       - name: Cache system dependencies
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: build-essential cppcheck
+          packages: build-essential cppcheck valgrind
           version: 1.0 # Change this version to force a cache refresh
         
       - name: Cache build artifacts
@@ -33,7 +33,7 @@ jobs:
             ${{ runner.os }}-build-
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential cppcheck
+        run: sudo apt-get update && sudo apt-get install -y build-essential cppcheck valgrind
 
       - name: Run static analysis
         run: make check
@@ -43,3 +43,6 @@ jobs:
 
       - name: Run tests
         run: make test
+    
+      - name: Run valgrind tests
+        run: make valgrind_test

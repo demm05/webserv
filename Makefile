@@ -7,6 +7,7 @@ CXXFLAGS	=	-std=c++98 -Wall -Wextra -Werror -I$(HDIR) -MMD -MP
 HDIR		=	inc
 ODIR		=	obj
 SDIR		=	src
+LOGDIR		=	log_valgrind
 # ================================== FILES =================================== #
 SRCS		:=	$(shell find $(SDIR) -name "*.cpp")
 OBJS		:=	$(patsubst $(SDIR)/%.cpp,$(ODIR)/%.o,$(SRCS))

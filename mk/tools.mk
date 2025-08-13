@@ -4,8 +4,12 @@ check:
 cdb compiledb:
 	@compiledb make -n $(NAME) build_tests > /dev/null 2>&1
 
-v valgrind:
-	@valgrind --leak-check=full ./$(NAME) $(ARGS)
+v valgrind: | $(LOGDIR)
+	@$(VALGRIND) ./$(NAME) $(ARGS)
+	@find $(LOGDIR) -name 'valgrind-*.log' -type f -empty -delete
+
+$(LOGDIR):
+	@mkdir -p $(LOGDIR)
 
 i init:
 	@git submodule update --init --remote --recursive
