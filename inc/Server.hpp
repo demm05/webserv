@@ -3,6 +3,8 @@
 #include "Socket.hpp"
 #include "EpollManager.hpp"
 #include "Client.hpp"
+#include <cerrno>
+#include <iostream>
 #include <map>
 
 class Server {
