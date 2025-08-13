@@ -13,3 +13,4 @@ run_tests
 doxy/
 lib/
 .vscode/
+log_valgrind/
