@@ -26,7 +26,7 @@ void EpollManager::addFd(int fd, uint32_t events) {
 
 void EpollManager::removeFd(int fd) {
     if (epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, NULL) < 0) {
-        throw std::runtime_error("Failed to add fd to epoll: " + std::string(strerror(errno)));
+        throw std::runtime_error("Failed to remove fd to epoll: " + std::string(strerror(errno)));
     }
 }
 

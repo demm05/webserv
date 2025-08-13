@@ -8,6 +8,10 @@ Client::~Client() {
     disconnect();
 }
 
+bool Client::isConnected() const {
+    return connected_;
+}
+
 void Client::disconnect() {
     if (connected_ && fd_ >= 0) {
         close(fd_);

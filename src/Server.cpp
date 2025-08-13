@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server() : listeningSocket_(NULL) {
+Server::Server() : listeningSocket_(NULL), isRunning_(false) {
 }
 
 Server::~Server() {

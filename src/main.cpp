@@ -11,7 +11,7 @@ int main(void) {
 
         if (listen(socket->getFd(), 5) < 0) {
             delete socket;
-            throw std::runtime_error("Faild to listen on socket");
+            throw std::runtime_error("Failed to listen on socket");
         }
 
         server.run();
