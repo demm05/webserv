@@ -16,8 +16,8 @@ public:
     int writeData(const char *data, size_t size);
 
 private:
-    int _fd;
-    bool _connected;
+    int fd_;
+    bool connected_;
 
     Client(const Client &other);
     Client &operator=(const Client &other);

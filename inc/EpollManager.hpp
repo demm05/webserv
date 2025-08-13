@@ -19,7 +19,7 @@ public:
     int waitForEvents(struct epoll_event *events, int max_events, int timeout = -1);
 
 private:
-    int _epollFd;
+    int epollFd_;
 
     EpollManager(const EpollManager &other);
     EpollManager &operator=(const EpollManager &other);

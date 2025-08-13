@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server() : _listeningSocket(NULL) {
+Server::Server() : listeningSocket_(NULL) {
 }
 
 Server::~Server() {
@@ -8,20 +8,20 @@ Server::~Server() {
 }
 
 void Server::setupSocket(Socket *socket) {
-    _listeningSocket = socket;
+    listeningSocket_ = socket;
 }
 
 void Server::run() {
-    if (!_listeningSocket) {
+    if (!listeningSocket_) {
         throw std::runtime_error("No socket set - call setupSocket() first");
     }
 
-    _isRunning = true;
+    isRunning_ = true;
     struct epoll_event events[1024];
-    _epollManager.addFd(_listeningSocket->getFd(), EPOLLIN);
-    std::cout << "Listen finished: " << _listeningSocket->getFd() << std::endl;
-    while (_isRunning) {
-        int nready = _epollManager.waitForEvents(events, 1024);
+    epollManager_.addFd(listeningSocket_->getFd(), EPOLLIN);
+    std::cout << "Listen finished: " << listeningSocket_->getFd() << std::endl;
+    while (isRunning_) {
+        int nready = epollManager_.waitForEvents(events, 1024);
         if (nready < 0) {
             if (errno == EINTR)
                 continue;
@@ -30,7 +30,7 @@ void Server::run() {
         for (int i = 0; i < nready; ++i) {
             int fd = events[i].data.fd;
 
-            if (fd == _listeningSocket->getFd()) {
+            if (fd == listeningSocket_->getFd()) {
                 handleNewConnection();
             } else if (events[i].events & EPOLLIN) {
                 handleClientData(fd);
@@ -41,25 +41,25 @@ void Server::run() {
 }
 
 void Server::stop() {
-    _isRunning = false;
+    isRunning_ = false;
 }
 
 void Server::handleNewConnection() {
     struct sockaddr_in clientAddr;
     socklen_t addrLen = sizeof(clientAddr);
 
-    int clientFd = accept(_listeningSocket->getFd(), (struct sockaddr *)&clientAddr, &addrLen);
+    int clientFd = accept(listeningSocket_->getFd(), (struct sockaddr *)&clientAddr, &addrLen);
     if (clientFd < 0) {
         return;
     }
     std::cout << "Accept finished: " << clientFd << std::endl;
-    _clients[clientFd] = new Client(clientFd);
-    _epollManager.addFd(clientFd, EPOLLIN);
+    clients_[clientFd] = new Client(clientFd);
+    epollManager_.addFd(clientFd, EPOLLIN);
 }
 
 void Server::handleClientData(int clientFd) {
-    std::map<int, Client *>::iterator it = _clients.find(clientFd);
-    if (it == _clients.end()) {
+    std::map<int, Client *>::iterator it = clients_.find(clientFd);
+    if (it == clients_.end()) {
         return;
     }
     Client *client = it->second;
@@ -77,18 +77,18 @@ void Server::handleClientData(int clientFd) {
 }
 
 void Server::handleClientDisconnection(int clientFd) {
-    std::map<int, Client *>::iterator it = _clients.find(clientFd);
-    if (it != _clients.end()) {
-        _epollManager.removeFd(clientFd);
+    std::map<int, Client *>::iterator it = clients_.find(clientFd);
+    if (it != clients_.end()) {
+        epollManager_.removeFd(clientFd);
         delete it->second;
-        _clients.erase(it);
+        clients_.erase(it);
     }
 }
 
 void Server::cleanup() {
-    for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-        _epollManager.removeFd(it->first);
+    for (std::map<int, Client *>::iterator it = clients_.begin(); it != clients_.end(); ++it) {
+        epollManager_.removeFd(it->first);
         delete it->second;
     }
-    _clients.clear();
+    clients_.clear();
 }

@@ -17,10 +17,10 @@ public:
     void stop();
 
 private:
-    Socket *_listeningSocket;
-    EpollManager _epollManager;
-    std::map<int, Client *> _clients;
-    bool _isRunning;
+    Socket *listeningSocket_;
+    EpollManager epollManager_;
+    std::map<int, Client *> clients_;
+    bool isRunning_;
 
     void handleNewConnection();
     void handleClientData(int clientFd);
