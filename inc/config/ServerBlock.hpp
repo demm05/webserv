@@ -18,8 +18,7 @@ namespace config {
  */
 class ServerBlock {
 public:
-    ServerBlock() : port_(-1) {
-    }
+    ServerBlock();
 
     /**
      * @brief Retrieves the configuration for a specific location path.
@@ -40,10 +39,17 @@ public:
     bool matchServerName(std::string const &) const;
 
 private:
+    void setDefaultPort();
+    void setDefaultAddress();
+
     friend class ConfigBuilder;
     friend class ServerConfig;
 
+    static const int defaultPort_;
+    static const char *defaultAddress_;
+
     int port_;
+    std::string address_;
     std::vector<std::string> serverNames_; // TODO: Change CTL for performance
     std::map<std::string, LocationBlock> locations_;
 };

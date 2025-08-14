@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include "ConfigException.hpp"
 #include "ConfigBuilder.hpp"
+#include "config/utils.hpp"
 
 namespace config {
 
@@ -99,13 +100,27 @@ void ConfigBuilder::buildLocation(ServerBlock &conf, ConfigNode const &node) {
 void ConfigBuilder::handleListen(ServerBlock &cfg, DirectiveArgs const &args) {
     if (args.size() == 0) {
         issue_warning("No port specified for the 'listen' directive. Using default port.");
+        cfg.setDefaultPort();
     }
     if (args.size() > 1) {
         issue_warning(
             "Multiple ports provided for the 'listen' directive. Only the first port specified (" +
             args[0] + ") will be used.");
     }
-    cfg.port_ = 80;
+    utils::IpInfo info;
+    if (!utils::extractIpInfo(args[0], info)) {
+        throw ConfigError("Listen directive '" + args[0] + "' is invalid");
+    }
+    if (info.port == -1) {
+        cfg.setDefaultPort();
+    } else {
+        cfg.port_ = info.port;
+    }
+    if (info.ip.empty()) {
+        cfg.setDefaultAddress();
+    } else {
+        cfg.address_ = info.ip;
+    }
 }
 
 void ConfigBuilder::handleServerName(ServerBlock &, DirectiveArgs const &) {
