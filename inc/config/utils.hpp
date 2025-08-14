@@ -11,10 +11,10 @@ bool isValidIPv4(char const *);
 bool isValidIPv4(std::string const &);
 bool isAllDigit(std::string const &s);
 
-typedef struct IpInfo {
+struct IpInfo {
     std::string ip;
     int port;
-} IpInfo;
+};
 
 bool extractIpInfo(std::string const &, IpInfo &);
 
