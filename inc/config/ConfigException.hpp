@@ -2,7 +2,6 @@
 
 #include <exception>
 #include <string>
-#include <iostream>
 
 namespace config {
 

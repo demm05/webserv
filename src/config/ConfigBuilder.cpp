@@ -101,6 +101,7 @@ void ConfigBuilder::handleListen(ServerBlock &cfg, DirectiveArgs const &args) {
     if (args.size() == 0) {
         issue_warning("No port specified for the 'listen' directive. Using default port.");
         cfg.setDefaultPort();
+        return;
     }
     if (args.size() > 1) {
         issue_warning(
@@ -123,13 +124,25 @@ void ConfigBuilder::handleListen(ServerBlock &cfg, DirectiveArgs const &args) {
     }
 }
 
-void ConfigBuilder::handleServerName(ServerBlock &, DirectiveArgs const &) {
+void ConfigBuilder::handleServerName(ServerBlock &cfg, DirectiveArgs const &args) {
+    cfg.serverNames_.reserve(cfg.serverNames_.size() + args.size());
+    for (DirectiveArgs::const_iterator it = args.begin(); it != args.end(); ++it) {
+        cfg.serverNames_.push_back(*it);
+    }
 }
 
-void ConfigBuilder::handleRoot(LocationBlock &, DirectiveArgs const &) {
+void ConfigBuilder::handleRoot(LocationBlock &loc, DirectiveArgs const &args) {
+    if (args.size() != 1) {
+        throw ConfigError("root directive requires exactly 1 argument");
+    }
+    loc.root = args[0];
 }
 
-void ConfigBuilder::handleIndex(LocationBlock &, DirectiveArgs const &) {
+void ConfigBuilder::handleIndex(LocationBlock &loc, DirectiveArgs const &args) {
+    loc.index.reserve(args.size());
+    for (DirectiveArgs::const_iterator it = args.begin(); it != args.end(); ++it) {
+        loc.index.push_back(*it);
+    }
 }
 
 } // namespace config

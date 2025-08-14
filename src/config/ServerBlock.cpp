@@ -8,6 +8,8 @@ const char *ServerBlock::defaultAddress_ = "0.0.0.0";
 
 
 ServerBlock::ServerBlock() : port_(-1) {
+    setDefaultPort();
+    setDefaultAddress();
 }
 
 bool ServerBlock::getLocation(std::string const &name, LocationBlock const *&res) const {

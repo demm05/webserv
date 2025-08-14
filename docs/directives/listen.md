@@ -5,7 +5,7 @@ Specifies the IP address and port for the server to listen on.
 |             |                                   |
 | ----------- | --------------------------------- |
 | **Syntax**  | `listen [address]:[port];`        |
-| **Default** | `listen 0.0.0.0:8080;`            |
+| **Default** | `listen 0.0.0.0:9191;`            |
 | **Context** | `server`                          |
 
 ---
