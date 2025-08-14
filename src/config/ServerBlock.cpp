@@ -31,10 +31,8 @@ LocationBlock const *ServerBlock::getLocation(std::string const &server_name) co
 bool ServerBlock::matchServerName(std::string const &needle) const {
     if (serverNames_.empty())
         return true;
-    for (size_t i = 0; i < serverNames_.size(); i++) {
-        if (std::find(serverNames_.begin(), serverNames_.end(), needle) != serverNames_.end())
-            return true;
-    }
+    if (std::find(serverNames_.begin(), serverNames_.end(), needle) != serverNames_.end())
+        return true;
     return false;
 }
 

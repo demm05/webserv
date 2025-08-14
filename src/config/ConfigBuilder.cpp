@@ -25,7 +25,7 @@ ConfigBuilder::LocationHandlerMap const &ConfigBuilder::getLocationDirectiveHand
 
 ServerBlockVec ConfigBuilder::build(ConfigNodeVec const &nodes) {
     if (nodes.empty())
-        throw ConfigError("config file is empty");
+        throw ConfigError("Config file is empty");
 
     ConfigBuilder cb;
     cb.servers_.reserve(nodes.size());
@@ -51,7 +51,7 @@ void ConfigBuilder::buildServerDirectives(ServerBlock &conf, DirectiveMap const 
         std::string const &name = it->first;
         handler = handlers.find(name);
         if (handler == handlers.end())
-            throw ConfigError("unknown directive '" + name + "' in server block");
+            throw ConfigError("Unknown directive '" + name + "' in server block");
         (this->*handler->second)(conf, it->second);
     }
 }
@@ -66,7 +66,7 @@ void ConfigBuilder::buildServerChildren(ServerBlock &conf, ConfigNodeVec const &
     for (ConfigNodeVec::const_iterator it = nodes.begin(); it != nodes.end(); ++it) {
         NodeHandlerMap::const_iterator handler = handlers.find(it->name);
         if (handler == handlers.end()) {
-            throw ConfigError("unknown block '" + it->name + "' in server block'");
+            throw ConfigError("Nnknown block '" + it->name + "' in server block'");
         }
         (this->*handler->second)(conf, *it);
     }
@@ -74,7 +74,7 @@ void ConfigBuilder::buildServerChildren(ServerBlock &conf, ConfigNodeVec const &
 
 void ConfigBuilder::buildLocation(ServerBlock &conf, ConfigNode const &node) {
     if (node.args.size() != 1) {
-        throw ConfigError("location block requires exactly 1 path argument");
+        throw ConfigError("Location block requires exactly 1 path argument");
     }
     LocationBlock loc;
     loc.path = node.args[0];
@@ -90,7 +90,7 @@ void ConfigBuilder::buildLocation(ServerBlock &conf, ConfigNode const &node) {
         LocationHandlerMap::const_iterator handler;
         handler = handlers.find(it->first);
         if (handler == handlers.end()) {
-            throw ConfigError("unknown directive '" + it->first + "' in server block");
+            throw ConfigError("Unknown directive '" + it->first + "' in server block");
         }
         (this->*handler->second)(loc, it->second);
     }
@@ -133,7 +133,7 @@ void ConfigBuilder::handleServerName(ServerBlock &cfg, DirectiveArgs const &args
 
 void ConfigBuilder::handleRoot(LocationBlock &loc, DirectiveArgs const &args) {
     if (args.size() != 1) {
-        throw ConfigError("root directive requires exactly 1 argument");
+        throw ConfigError("Root directive requires exactly 1 argument");
     }
     loc.root = args[0];
 }

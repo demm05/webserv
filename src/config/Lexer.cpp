@@ -1,7 +1,7 @@
 #include "Lexer.hpp"
 #include <iostream>
 
-using namespace config;
+namespace config {
 
 Lexer::Lexer(std::string const &content, TokenArray &res)
     : content_(content), tokens_(res), pos_(0), ch_(0) {
@@ -86,10 +86,10 @@ void Lexer::eatWhitespaces() {
 }
 
 void Lexer::identifyLastToken() {
-    bool is_number = 0;
+    bool is_number = 1;
     std::string &literal = tokens_.back().literal;
     for (size_t i = 0; i < literal.length(); i++) {
-        if (!::isspace(literal[i])) {
+        if (!::isdigit(literal[i])) {
             is_number = 0;
             break;
         }
@@ -117,4 +117,6 @@ void Lexer::printTokens(TokenArray const &tokens) {
         std::cout << tokens[i].literal << " -> ";
     }
     std::cout << std::endl;
+}
+
 }

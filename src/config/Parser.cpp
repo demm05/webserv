@@ -1,6 +1,7 @@
-#include "Parser.hpp"
+#include "config/Parser.hpp"
+#include "config/ConfigException.hpp"
 
-using namespace config;
+namespace config {
 
 Parser::Parser(TokenArray const &tokens) : tokens_(tokens), pos_(0) {
     nodes_.reserve(2);
@@ -17,13 +18,13 @@ size_t Parser::size() const {
 }
 
 Token const &Parser::currentToken() const {
-    if (pos_ > size())
+    if (pos_ >= size())
         return tokens_.back();
     return tokens_[pos_];
 }
 
 Token const &Parser::peekToken() const {
-    if (pos_ > size())
+    if (pos_ + 1 >= size())
         return tokens_.back();
     return tokens_[pos_ + 1];
 }
@@ -35,13 +36,13 @@ void Parser::consumeToken() {
 
 void Parser::expectToken(TokenType type) {
     if (currentToken().type != type)
-        throw std::runtime_error("non matching token types");
+        throw ConfigError("Non matching token types");
     consumeToken();
 }
 
 void Parser::expectToken(std::string literal) {
     if (currentToken().literal != literal)
-        throw std::runtime_error("non matching token literals");
+        throw ConfigError("Non matching token literals");
     consumeToken();
 }
 
@@ -84,9 +85,9 @@ void Parser::handleStatement() {
 void Parser::handleLocationBlock() {
     expectToken("location");
     if (peekToken().type != LEFT_BRACE)
-        throw std::runtime_error("non matching token types");
+        throw ConfigError("Non matching token types");
     if (!isTokenAValue())
-        throw std::runtime_error("Expected a location name (identifier).");
+        throw ConfigError("Expected a location name (identifier)");
 
     ConfigNode node(std::string("location"));
     node.args.push_back(currentToken().literal);
@@ -101,7 +102,7 @@ void Parser::handleLocationBlock() {
 
 DirectivePair Parser::handleDirective() {
     if (!isTokenAValue())
-        throw std::runtime_error("Expected a directive name (identifier).");
+        throw ConfigError("Expected a directive name (identifier).");
 
     DirectivePair d;
     d.first = currentToken().literal;
@@ -113,4 +114,6 @@ DirectivePair Parser::handleDirective() {
     }
     expectToken(SEMICOLON);
     return d;
+}
+
 }
