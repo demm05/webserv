@@ -66,7 +66,7 @@ void ConfigBuilder::buildServerChildren(ServerBlock &conf, ConfigNodeVec const &
     for (ConfigNodeVec::const_iterator it = nodes.begin(); it != nodes.end(); ++it) {
         NodeHandlerMap::const_iterator handler = handlers.find(it->name);
         if (handler == handlers.end()) {
-            throw ConfigError("Nnknown block '" + it->name + "' in server block'");
+            throw ConfigError("Unknown block '" + it->name + "' in server block'");
         }
         (this->*handler->second)(conf, *it);
     }
