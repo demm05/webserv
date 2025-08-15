@@ -1,4 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/15 19:46:42 by szhong            #+#    #+#             */
+/*   Updated: 2025/08/15 19:49:02 by szhong           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "Server.hpp"
+#include "Client.hpp"
+#include "EpollManager.hpp"
+#include <iostream>
+#include <fcntl.h>
+#include <cerrno>
 
 Server::Server() : listeningSocket_(NULL), isRunning_(false) {
 }
@@ -48,10 +64,12 @@ void Server::handleNewConnection() {
     struct sockaddr_in clientAddr;
     socklen_t addrLen = sizeof(clientAddr);
 
-    int clientFd = accept(listeningSocket_->getFd(), (struct sockaddr *)&clientAddr, &addrLen);
+    int clientFd = accept(listeningSocket_->getFd(), reinterpret_cast<struct sockaddr*>(&clientAddr), &addrLen);
     if (clientFd < 0) {
         return;
     }
+	int flags = fcntl(clientFd, F_GETFL, 0);
+    fcntl(clientFd, F_SETFL, flags | O_NONBLOCK);
     std::cout << "Accept finished: " << clientFd << std::endl;
     clients_[clientFd] = new Client(clientFd);
     epollManager_.addFd(clientFd, EPOLLIN);

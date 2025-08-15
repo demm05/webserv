@@ -1,10 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/15 19:46:47 by szhong            #+#    #+#             */
+/*   Updated: 2025/08/15 19:49:10 by szhong           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #pragma once
 
+#include "Client.hpp"
 #include "Socket.hpp"
 #include "EpollManager.hpp"
-#include "Client.hpp"
-#include <cerrno>
-#include <iostream>
 #include <map>
 
 class Server {

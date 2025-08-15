@@ -1,4 +1,9 @@
 #include "EpollManager.hpp"
+#include <stdexcept>
+#include <cstring>
+#include <cerrno>
+#include <cstdio>
+#include <unistd.h>
 
 EpollManager::EpollManager() : epollFd_(-1) {
     epollFd_ = epoll_create1(0);

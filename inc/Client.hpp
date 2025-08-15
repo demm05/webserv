@@ -9,7 +9,7 @@ public:
     ~Client();
 
     int getFd() const;
-    bool isConnected() const;
+    bool getIsConnected() const;
     void disconnect();
 
     int readData(char *buffer, size_t size);
@@ -17,7 +17,7 @@ public:
 
 private:
     int fd_;
-    bool connected_;
+    bool isConnected_;
 
     Client(const Client &other);
     Client &operator=(const Client &other);
