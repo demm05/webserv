@@ -1,28 +1,28 @@
 #include "HttpStatus.hpp"
 
-HttpStatus::StatusCode::StatusCode() : code_(HttpStatus::OK) {
+http::StatusCode::StatusCode() : code_(http::OK) {
 }
 
-HttpStatus::StatusCode::StatusCode(Status code) : code_(code) {
+http::StatusCode::StatusCode(Status code) : code_(code) {
 }
 
-HttpStatus::StatusCode::StatusCode(const StatusCode &other) : code_(other.code_) {
+http::StatusCode::StatusCode(const StatusCode &other) : code_(other.code_) {
 }
 
-HttpStatus::StatusCode &HttpStatus::StatusCode::operator=(const StatusCode &other) {
+http::StatusCode &http::StatusCode::operator=(const StatusCode &other) {
     if (this != &other) {
         code_ = other.code_;
     }
     return *this;
 }
 
-HttpStatus::Status HttpStatus::StatusCode::getCode() const {
+http::Status http::StatusCode::getCode() const {
     return code_;
 }
 
-const char *HttpStatus::StatusCode::getMessage() const {
+const char *http::StatusCode::getMessage() const {
     return statusMessage(code_);
 }
 
-HttpStatus::StatusCode::~StatusCode() {
+http::StatusCode::~StatusCode() {
 }

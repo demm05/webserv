@@ -32,7 +32,7 @@ public:
      *
      * @param path Path to the file to be read.
      */
-    ResponseContent(const char* path);
+    ResponseContent(const char *path);
 
     /**
      * @brief Constructs the response from raw body content and MIME type.
@@ -40,7 +40,7 @@ public:
      * @param body Body content to store.
      * @param type MIME type to associate with the body.
      */
-    ResponseContent(const std::string& body, const std::string& type);
+    ResponseContent(const std::string &body, const std::string &type);
 
     /**
      * @brief Copy constructor.
@@ -49,7 +49,7 @@ public:
      *
      * @param other Instance to copy from.
      */
-    ResponseContent(const ResponseContent& other);
+    ResponseContent(const ResponseContent &other);
 
     /**
      * @brief Copy assignment operator.
@@ -59,21 +59,21 @@ public:
      * @param other Instance to copy from.
      * @return Reference to this instance.
      */
-    ResponseContent& operator=(const ResponseContent& other);
+    ResponseContent &operator=(const ResponseContent &other);
 
     /**
      * @brief Retrieves the stored response body.
      *
      * @return Constant reference to the body string.
      */
-    const std::string& getBody() const;
+    const std::string &getBody() const;
 
     /**
      * @brief Retrieves the stored MIME type.
      *
      * @return Constant reference to the MIME type string.
      */
-    const std::string& getType() const;
+    const std::string &getType() const;
 
     /**
      * @brief Retrieves the length of the body content in bytes.
@@ -109,4 +109,3 @@ private:
      */
     void setFileType(const std::string &path);
 };
-

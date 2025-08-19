@@ -1,12 +1,12 @@
 #include "Response.hpp"
 
 Response::Response()
-    : httpVersion_("HTTP/1.1"), connectionType_("close"), statusCode_(HttpStatus::OK), content_() {
+    : httpVersion_("HTTP/1.1"), connectionType_("close"), statusCode_(http::OK), content_() {
     buildResponseStream();
 }
 
 Response::Response(const std::string &httpVersion, const std::string &connectionType,
-                   const HttpStatus::StatusCode &statusCode, const ResponseContent &content)
+                   const http::StatusCode &statusCode, const ResponseContent &content)
     : httpVersion_(httpVersion), connectionType_(connectionType), statusCode_(statusCode),
       content_(content) {
     buildResponseStream();
@@ -37,7 +37,7 @@ const ResponseContent &Response::getContent() const {
     return content_;
 }
 
-const HttpStatus::StatusCode &Response::getStatusCode() const {
+const http::StatusCode &Response::getStatusCode() const {
     return statusCode_;
 }
 
