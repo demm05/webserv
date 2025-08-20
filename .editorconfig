@@ -1,0 +1,17 @@
+root = true
+
+# General rules for all files
+[*]
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# C/C++ source and header files
+[*.{c,cpp,h,hpp}]
+indent_style = space
+indent_size = 4
+
+# Makefile rules (must use tabs)
+[{Makefile,*.mk}]
+indent_style = tab
