@@ -1,11 +1,12 @@
 #include "EpollManager.hpp"
+#include <iostream>
 #include <stdexcept>
 #include <cstring>
 #include <cerrno>
 #include <cstdio>
 #include <unistd.h>
 
-EpollManager::EpollManager() : epollFd_(-1) {
+EpollManager::EpollManager() : epollFd_(-1), isShuttingDown(0)  {
     epollFd_ = epoll_create1(0);
     if (epollFd_ < 0) {
         throw std::runtime_error("Failed to create epoll instance: " +
@@ -47,8 +48,8 @@ void EpollManager::modifyFd(int fd, uint32_t events) {
 
 // TODO research on the industry standard what the best timeout should I set up for is
 int EpollManager::waitForEvents(struct epoll_event *events, int maxEvents, int timeout) {
-    while (!shutdownFlag_) {
-        int result = epoll_wait(epollFd_, events, maxEvents, -1);
+    while (!isShuttingDown) {
+        int result = epoll_wait(epollFd_, events, maxEvents, timeout);
 
         if (result > 0) {
             return result;
@@ -67,9 +68,9 @@ int EpollManager::waitForEvents(struct epoll_event *events, int maxEvents, int t
 }
 
 void EpollManager::requestShutdown() {
-    shutdownFlag_ = 1;
+    isShuttingDown = 1;
 }
 
-bool EpollManager::shouldShutdown() const {
-    return shutdownFlag_ != 0;
+bool EpollManager::getisShuttingDown() const {
+    return isShuttingDown != 0;
 }

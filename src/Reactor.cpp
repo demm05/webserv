@@ -1,6 +1,10 @@
-#include "Reactor.hpp"
-#include "InitiationDispatcher.hpp"
+#include <cstring>
+#include <cerrno>
 #include <iostream>
+#include <sys/socket.h> 
+#include <unistd.h>
+#include "InitiationDispatcher.hpp"
+#include "Reactor.hpp"
 
 Reactor::Reactor(int clientFd) : clientFd_(clientFd), readLength_(0), writeLength_(0) {
     memset(readBuffer_, 0, BUFFER_LENGTH);

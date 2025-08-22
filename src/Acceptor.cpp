@@ -1,17 +1,21 @@
+#include <cerrno> 
+#include <cstring>
 #include <iostream>
+#include <sys/socket.h>
+#include "Acceptor.hpp"
 #include "InitiationDispatcher.hpp"
 #include "Reactor.hpp"
 #include "Socket.hpp"
 
 Acceptor::Acceptor(int port) : socket_(NULL), port_(port) {
-    setupListenSocket();
+    setupListeningSocket();
 }
 
 Acceptor::~Acceptor() {
     delete socket_;
 }
 
-void Acceptor::setupListenSocket() {
+void Acceptor::setupListeningSocket() {
     socket_ = new Socket(port_);
     if (listen(socket_->getFd(), 10) < 0) {
         delete socket_;

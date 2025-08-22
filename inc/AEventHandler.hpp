@@ -15,16 +15,16 @@
  *  virtual void handleEvent(uint32_t events) = 0;  // Pure virtual - must implement
  *  virtual int getHandle() const = 0;               // Returns file
  */
-class EventHander {
+class AEventHandler {
 public:
-    virtual ~EventHandler();
+    virtual ~AEventHandler();
     virtual void handleEvent(uint32_t events) = 0;
     virtual int getHandle() const = 0;
 
 protected:
-    EventHandler();
+    AEventHandler();
 
 private:
-    EventHandler(const EventHandler &);
-    EventHandler &operator=(const EventHandler &);
+    AEventHandler(const AEventHandler &);
+    AEventHandler &operator=(const AEventHandler &);
 };

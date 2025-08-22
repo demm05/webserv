@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <sys/epoll.h>
+#include <signal.h>
 
 /**
  * @brief Synchronous event demultiplexer that wraps Linux epoll for I/O event monitoring.
@@ -26,7 +27,7 @@ public:
 
 private:
     int epollFd_;
-    volatile sig_atomic_t shutdownFlag_;
+    volatile sig_atomic_t isShuttingDown; 
 
     EpollManager(const EpollManager &other);
     EpollManager &operator=(const EpollManager &other);

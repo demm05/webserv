@@ -1,4 +1,5 @@
 #pragma once
+
 #include "EpollManager.hpp"
 #include "AEventHandler.hpp"
 #include <map>
@@ -16,7 +17,7 @@ class InitiationDispatcher {
 public:
     static InitiationDispatcher &getInstance();
 
-    void registerHandler(EventHandler *handler);
+    void registerHandler(AEventHandler *handler);
     void removeHandler(int fd);
     void handleEvents();
     void requestShutdown();
@@ -27,9 +28,9 @@ private:
     ~InitiationDispatcher();
 
     EpollManager epollManager_;
-    std::map<int, EventHandler *> handlers_;
+    std::map<int, AEventHandler *> handlers_;
     static InitiationDispatcher *instance_;
 
     InitiationDispatcher(const InitiationDispatcher &);
     InitiationDispatcher &operator=(const InitiationDispatcher &);
-}
+};

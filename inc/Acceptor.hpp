@@ -13,7 +13,7 @@
  * that client's subsequent communication. This implements the connection establishment phase of the
  * Reactor pattern.
  */
-class Acceptor : public EventHandler {
+class Acceptor : public AEventHandler {
 public:
     explicit Acceptor(int port);
     ~Acceptor();
@@ -30,4 +30,4 @@ private:
 
     Acceptor(const Acceptor &);
     Acceptor &operator=(const Acceptor &);
-}
+};

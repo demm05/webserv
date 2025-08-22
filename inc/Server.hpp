@@ -1,9 +1,9 @@
 #pragma once
 
+#include <signal.h>
+#include <vector>
 #include "InitiationDispatcher.hpp"
 #include "Acceptor.hpp"
-#include <vector>
-#include <signal.h>
 
 #define MAX_PORTS 20
 
@@ -70,11 +70,11 @@ private:
     InitiationDispatcher &dispatcher_;
     std::vector<Acceptor *> acceptors_;
     bool isRunning_;
-    bool isShuttingDown_;
     static const int BASE_PORT = 2000;
 
     static Server *instance_;
 
+    volatile sig_atomic_t shutdownRequested_; 
     void setupAcceptors();
     void setupSignalHandlers();
     void cleanup();

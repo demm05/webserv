@@ -12,7 +12,7 @@
  * for reading client data and EPOLLOUT events for writing responses. Each instance
  * manages the complete I/O lifecycle for one client connection.
  */
-class Reactor : public EventHandler {
+class Reactor : public AEventHandler {
 public:
     explicit Reactor(int clientFd);
     ~Reactor();
@@ -20,15 +20,15 @@ public:
     virtual void handleEvent(uint32_t events);
     virtual int getHandle() const;
 
-    privat : int clientFd_;
+private : int clientFd_;
     char readBuffer_[BUFFER_LENGTH];
     int readLength_;
     char writeBuffer_[BUFFER_LENGTH];
-    int wriiteLength_;
+    int writeLength_;
 
     void handleRead();
     void handleWrite();
 
     Reactor(const Reactor &);
     Reactor &operator=(const Reactor &);
-}
+};
