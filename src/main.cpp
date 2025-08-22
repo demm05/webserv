@@ -1,17 +1,22 @@
-#include "Socket.hpp"
-#include <unistd.h>
 #include <iostream>
+#include <exception>
+#include "ServerConfig.hpp"
+#include "ConfigException.hpp"
 
-int main(void) {
-    Socket sk(9191);
-    listen(sk.getFd(), 5);
-    struct sockaddr_in client_addr;
-    socklen_t client_len = sizeof(client_addr);
-    int client_fd = accept(sk.getFd(), (struct sockaddr *)&client_addr, &client_len);
-    char buffer[1024] = {0};
-    int bytes_received = recv(client_fd, buffer, 1024, 0);
-    buffer[bytes_received] = '\0';
-    std::cout << buffer;
-    close(client_fd);
+using config::ServerConfig;
+
+int main(int argc, char const **argv) {
+    if (argc < 2) {
+        std::cerr << "Error: Config file should be provided" << std::endl;
+        return 1;
+    }
+    try {
+        ServerConfig cfg(argv[1]);
+    } catch (config::ConfigException const &e) {
+        std::cerr << e.what() << std::endl;
+    } 
+    catch (std::exception const &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    };
     return 0;
 }

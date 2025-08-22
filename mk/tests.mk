@@ -35,4 +35,4 @@ test_clean:
 $(DOCTEST_DIR):
 	@$(MAKE) init
 
-.PHONY: t test build_tests test_clean
+.PHONY: t test build_tests test_clean vt valgrind_test

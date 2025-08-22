@@ -62,7 +62,7 @@ void Socket::createAndBind(std::string const &address, int port) {
         fd_ = -1;
         throw std::runtime_error("Invalid IP address");
     }
-    if (bind(fd_, (struct sockaddr *)&addr_, sizeof(addr_)) < 0) {
+    if (bind(fd_, reinterpret_cast<sockaddr *>(&addr_), sizeof(addr_)) < 0) {
         close(fd_);
         fd_ = -1;
         throw std::runtime_error("Failed to bind socket: " + std::string(strerror(errno)));
