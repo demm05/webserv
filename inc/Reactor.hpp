@@ -20,7 +20,8 @@ public:
     virtual void handleEvent(uint32_t events);
     virtual int getHandle() const;
 
-    privat : int clientFd_;
+private:
+    int clientFd_;
     char readBuffer_[BUFFER_LENGTH];
     int readLength_;
     char writeBuffer_[BUFFER_LENGTH];
@@ -29,6 +30,7 @@ public:
     void handleRead();
     void handleWrite();
 
+    HttpProcessor httpProcessor_;
     Reactor(const Reactor &);
     Reactor &operator=(const Reactor &);
 }

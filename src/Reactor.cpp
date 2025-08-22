@@ -1,6 +1,7 @@
 #include "Reactor.hpp"
 #include "InitiationDispatcher.hpp"
 #include <iostream>
+#include "HttpProcessor.hpp"
 
 Reactor::Reactor(int clientFd) : clientFd_(clientFd), readLength_(0), writeLength_(0) {
     memset(readBuffer_, 0, BUFFER_LENGTH);
@@ -43,9 +44,26 @@ void Reactor::handleRead() {
     }
     readLength_ = count;
     std::cout << "RECV: " << readBuffer_ << std::endl;
-    writeLength_ = readLength_;
-    memcpy(writeBuffer_, readBuffer_, writeLength_);
+    // writeLength_ = readLength_;
+    // memcpy(writeBuffer_, readBuffer_, writeLength_);
+    // ===== NEW HTTP PROCESSING =====
+    // Check if this looks like an HTTP request
+    if (strncmp(readBuffer_, "GET", 3) == 0 || strncmp(readBuffer_, "POST", 4) == 0 ||
+        strncmp(readBuffer_, "HEAD", 4) == 0) {
 
+        // Process as HTTP request
+        HttpProcessor httpProcessor;
+        std::string httpResponse = httpProcessor.processRequest(readBuffer_, readLength_);
+        // Copy HTTP response to write buffer
+        writeLength_ = std::min(httpResponse.length(), (size_t)(BUFFER_LENGTH - 1));
+        memcpy(writeBuffer_, httpResponse.c_str(), writeLength_);
+
+        std::cout << "Generated HTTP response (" << writeLength_ << " bytes)" << std::endl;
+    } else {
+        writeLength_ = readLength_;
+        memcpy(writeBuffer_, readBuffer_, writeLength_);
+        std::cout << "Echo response" << std::endl;
+    }
     InitiationDispatcher::getInstance().getEpollManager().modifyFd(clientFd_, EPOLLOUT);
 }
 
