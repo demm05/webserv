@@ -1,25 +1,16 @@
 #include "Server.hpp"
-#include "Socket.hpp"
 #include <iostream>
-#include <unistd.h>
+#include <exception>
 
 int main(void) {
+    std::cout << "Starting production server with signal handling..." << std::endl;
     try {
         Server server;
-        Socket *socket = new Socket(9191);
-        server.setupSocket(socket);
-
-        if (listen(socket->getFd(), 5) < 0) {
-            delete socket;
-            throw std::runtime_error("Failed to listen on socket");
-        }
-
-        server.run();
-        delete socket;
+        server.start();
     } catch (const std::exception &e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return (1);
     }
-
+    std::cout << "Server shutdown complete" << std::endl;
     return 0;
 }

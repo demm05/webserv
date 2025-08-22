@@ -1,112 +1,156 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/15 19:46:42 by szhong            #+#    #+#             */
-/*   Updated: 2025/08/15 19:49:02 by szhong           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 #include "Server.hpp"
-#include "Client.hpp"
-#include "EpollManager.hpp"
 #include <iostream>
-#include <fcntl.h>
-#include <cerrno>
+#include <sys/wait.h>
 
-Server::Server() : listeningSocket_(NULL), isRunning_(false) {
+// TODO write the documentation
+// In Server.hpp - this is a DECLARATION
+// class Server {
+//     static Server* instance_;  // ← Declaration: "instance_ exists somewhere"
+// };
+Server *Server::instance_ = NULL;
+
+Server::Server()
+    : dispatcher_(InitiationDispatcher::getInstance()), isRunning_(false), isShuttingDown_(false) {
+    instance_ = this;
+    setupSignalHandlers();
 }
 
 Server::~Server() {
     cleanup();
+    instance_ = NULL;
+}
+void Server::setupSignalHandlers() {
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = &Server::signalHandler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+
+    if (sigaction(SIGTERM, &sa, NULL) == -1) {
+        throw std::runtime_error("Failed to install SIGRTERM handler");
+    }
+    if (sigaction(SIGINT, &sa, NULL) == -1) {
+        throw std::runtime_error("Failed to install SIGINT handler");
+    }
+    if (sigaction(SIGHUP, &sa, NULL) == -1) {
+        throw std::runtime_error("Failed to install SIGINT handler");
+    }
+    if (sigaction(SIGHUP, &sa, NULL) == -1) {
+        throw std::runtime_error("Failed to install SIGHUP handler");
+    }
+    signal(SIGPIPE, SIG_IGN);
+    std::cout << "Signal handlers installed successfully" << std::endl;
 }
 
-void Server::setupSocket(Socket *socket) {
-    listeningSocket_ = socket;
+void Server::signalHandler(int sig) {
+    const char *signame;
+
+    switch (sig) {
+    case SIGTERM:
+        signame = "SIGTERM";
+        break;
+    case SIGINT:
+        signame = "SIGINT";
+        break;
+    case SIGHUP:
+        signame = "SIGHUP";
+        break;
+    default:
+        signame = "UNKNOWN";
+        break;
+    }
+    write(STDERR_FILENO, "Received signal: ", 17);
+    write(STDERR_FILENO, signame, strlen(signame));
+    write(STDERR_FILENO, "\n", 1);
+    if (instance_) {
+        instance_->shutdownRequested_ = true;
+        InitiationDispatcher::getInstance().requestShutdown();
+    }
 }
 
-void Server::run() {
-    if (!listeningSocket_) {
-        throw std::runtime_error("No socket set - call setupSocket() first");
-    }
+// TODO SIGHUP
+void Server::handleSignal(int sig) {
+    std::cout << "Processing signal: " << sig << std::endl;
 
-    isRunning_ = true;
-    struct epoll_event events[1024];
-    epollManager_.addFd(listeningSocket_->getFd(), EPOLLIN);
-    std::cout << "Listen finished: " << listeningSocket_->getFd() << std::endl;
-    while (isRunning_) {
-        int nready = epollManager_.waitForEvents(events, 1024);
-        if (nready < 0) {
-            if (errno == EINTR)
-                continue;
-            break;
-        }
-        for (int i = 0; i < nready; ++i) {
-            int fd = events[i].data.fd;
-
-            if (fd == listeningSocket_->getFd()) {
-                handleNewConnection();
-            } else if (events[i].events & EPOLLIN) {
-                handleClientData(fd);
-            }
-        }
+    switch (sig) {
+    case SIGTERM:
+    case SIGINT:
+        std::cout << "Graceful shutdown requested" << std::endl;
+        gracefulShutdown();
+        break;
+    case SIGHUP:
+        std::cout << "Configuration reload requested (not implemented)" << std::endl;
+        break;
+    default:
+        std::cout << "Unhandled signal: " << sig << std::endl;
+        break;
     }
-    cleanup();
+}
+
+void Server::start() {
+    if (isRunning_) {
+        std::cout << "Server is already running" << std::endl;
+        return;
+    }
+    std::cout << "Starting server..." << std::endl;
+    try {
+        setupAcceptors();
+        isRunning_ = true;
+
+        std::cout << "Server started on ports " << BASE_PORT << " to "
+                  << (BASE_PORT + MAX_PORTS - 1) << std::endl;
+        std::cout << "Send SIGTERM (kill) or SIGINT (Ctrl+C) for graceful shutdown" << std::endl;
+        dispatcher_.handleEvents();
+        gracefulShutdown();
+    } catch (const std::exception &e) {
+        std::cerr << "Server startup failed: " << e.what() << std::endl;
+        cleanup();
+        throw;
+    }
 }
 
 void Server::stop() {
+    std::cout << "Stop requested" << std::endl;
+    shutdownRequested_ = true;
+    dispatcher_.requestShutdown();
+}
+
+void Server::gracefulShutdown() {
+    if (!isRunning_) {
+        return;
+    }
+    std::cout << "Performing graceful shutdown..." << std::endl;
+    std::cout << "Stopping acceptors..." << std::endl;
+    for (size_t i = 0; i < acceptors_.size(); ++i) {
+        dispatcher_.removeHandler(acceptors_[i]->getHandle());
+    }
+    std::cout << "Waiting for existing connections to finish..." << std::endl;
+    sleep(2);
+    cleanup();
     isRunning_ = false;
+    std::cout << "Graceful shutdown completed" << std::endl;
 }
 
-void Server::handleNewConnection() {
-    struct sockaddr_in clientAddr;
-    socklen_t addrLen = sizeof(clientAddr);
-
-    int clientFd = accept(listeningSocket_->getFd(), reinterpret_cast<struct sockaddr*>(&clientAddr), &addrLen);
-    if (clientFd < 0) {
-        return;
-    }
-	int flags = fcntl(clientFd, F_GETFL, 0);
-    fcntl(clientFd, F_SETFL, flags | O_NONBLOCK);
-    std::cout << "Accept finished: " << clientFd << std::endl;
-    clients_[clientFd] = new Client(clientFd);
-    epollManager_.addFd(clientFd, EPOLLIN);
+bool Server::getisRunning() const {
+    return isRunning_;
 }
 
-void Server::handleClientData(int clientFd) {
-    std::map<int, Client *>::iterator it = clients_.find(clientFd);
-    if (it == clients_.end()) {
-        return;
-    }
-    Client *client = it->second;
-    char buffer[1024];
-    int readBytes = client->readData(buffer, sizeof(buffer) - 1);
-    if (readBytes <= 0) {
-        handleClientDisconnection(clientFd);
-        return;
-    }
-    buffer[readBytes] = '\0';
-    std::cout << "RECV: " << buffer << std::endl;
-
-    int byteSent = client->writeData(buffer, readBytes);
-    std::cout << "SEND: " << byteSent << std::endl;
-}
-
-void Server::handleClientDisconnection(int clientFd) {
-    std::map<int, Client *>::iterator it = clients_.find(clientFd);
-    if (it != clients_.end()) {
-        epollManager_.removeFd(clientFd);
-        delete it->second;
-        clients_.erase(it);
+void Server::setupAcceptors() {
+    for (int i = 0; i < MAX_PORTS; ++i) {
+        int port = BASE_PORT + i;
+        Acceptor *acceptor = new Acceptor(port);
+        acceptors_.push_back(acceptor);
+        dispatcher_.registerHandler(acceptor);
     }
 }
 
 void Server::cleanup() {
-    for (std::map<int, Client *>::iterator it = clients_.begin(); it != clients_.end(); ++it) {
-        epollManager_.removeFd(it->first);
-        delete it->second;
+    std::cout << "Cleaning up resources..." << std::endl;
+
+    for (size_t i = 0; i < acceptors_.size(); ++i) {
+        delete acceptors_[i];
     }
-    clients_.clear();
+    acceptors_.clear();
+
+    std::cout << "Cleanup completed" << std::endl;
 }
