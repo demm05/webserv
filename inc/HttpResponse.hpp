@@ -4,8 +4,6 @@
 
 /*
 #pragma once
-#include <string>
-#include <map>
 
 class HttpResponse {
 public:
