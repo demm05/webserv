@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['bindto_0',['bindTo',['../classSocket.html#a730a2cb13a930b4418a8864069f5299e',1,'Socket::bindTo(int port)'],['../classSocket.html#af432fa15f55cc6e8a50932e2846e431b',1,'Socket::bindTo(std::string const &amp;address, int port)']]]
+  ['adddirective_0',['addDirective',['../classconfig_1_1Parser.html#a18ed563a6b2b92c9703bb6a9a04ed751',1,'config::Parser']]]
 ];

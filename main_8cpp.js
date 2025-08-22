@@ -1,4 +1,5 @@
 var main_8cpp =
 [
-    [ "main", "main_8cpp.html#a840291bc02cba5474a4cb46a9b9566fe", null ]
+    [ "ServerConfig", "classServerConfig.html", "classServerConfig" ],
+    [ "main", "main_8cpp.html#a790aa8b99fa3d90918361b8936af0b14", null ]
 ];
