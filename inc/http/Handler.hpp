@@ -38,7 +38,7 @@ public:
 /**
  * @brief Handles serving static files from the filesystem.
  */
-class StaicFileHandler : public IHandler {
+class StaticFileHandler : public IHandler {
 public:
     HttpResponse handle(HttpRequest const &, config::ServerBlock const *s = NULL,
                         config::LocationBlock const *l = NULL) const {
@@ -65,6 +65,18 @@ public:
  * @brief Handles the execution of CGI scripts.
  */
 class CGIHandler : public IHandler {
+    HttpResponse handle(HttpRequest const &, config::ServerBlock const *s = NULL,
+                        config::LocationBlock const *l = NULL) const {
+        (void)s;
+        (void)l;
+        return HttpResponse();
+    }
+};
+
+/**
+ * @brief Handles the execution of CGI scripts.
+ */
+class ErrorHandler : public IHandler {
     HttpResponse handle(HttpRequest const &, config::ServerBlock const *s = NULL,
                         config::LocationBlock const *l = NULL) const {
         (void)s;

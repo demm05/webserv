@@ -27,6 +27,9 @@ public:
      */
     RouterResult route(int port, HttpRequest &request) const {
         config::ServerBlock const *server = config_.getServer(port, request.headers["host"]);
+        if (request.status != 200) {
+            return RouterResult(error_, server);
+        }
         if (!server) {
             return RouterResult(notFound_);
         }
@@ -44,8 +47,9 @@ private:
 
     // Reusable, stateless handler instances owned by the router.
     NotFoundHandler const notFound_;
-    StaicFileHandler const staticFile_;
+    StaticFileHandler const staticFile_;
     CGIHandler const cgi_;
+    ErrorHandler const error_;
 };
 
 } // namespace http

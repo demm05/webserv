@@ -17,8 +17,10 @@ namespace http {
  */
 class HttpRequest {
 public:
+    HttpRequest();
     typedef std::map<std::string, std::string> HeaderMap;
 
+    int status;
     utils::HttpMethod method;
     std::string uri;
     std::string version;

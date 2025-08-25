@@ -7,23 +7,31 @@
 #include <limits>
 
 using namespace std;
-using namespace utils;
 
 namespace http {
+
+using namespace utils;
+using namespace http::detail;
+
+HttpRequest::HttpRequest() : status(200) {
+}
 
 HttpRequest HttpRequest::parse(string const &buffer) {
     HttpRequest res;
     istringstream s(buffer);
-    if (!detail::parseStartLine(res, s) || !detail::parseHeaders(res.headers, s) ||
-        !detail::parseBody(res, s)) {
-        cout << "Invalid http request" << endl;
-        return HttpRequest();
+
+    if (!parseStartLine(res, s) || !parseHeaders(res.headers, s) || !parseBody(res, s)) {
+        res.status = 400;
     }
     return res;
 }
 
 std::ostream &operator<<(std::ostream &o, HttpRequest const &r) {
     o << "Method: (" << r.method << ")\nUri: (" << r.uri << ")\nVersion: (" << r.version << ")";
+    for (HttpRequest::HeaderMap::const_iterator it = r.headers.begin(); it != r.headers.end();
+         ++it) {
+        o << "\n" << it->first << ": " << it->second;
+    }
     return o;
 }
 
