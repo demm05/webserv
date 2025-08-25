@@ -17,13 +17,13 @@ TEST_CASE("buildError: returns proper status and loads body from file") {
     const std::string tmp =  "test_tmp_dir";
     const std::string errfile = "test_tmp_dir/errorpage.html";
 
-    config::ServerConfig cfg("/home/ogrativ/projects/ServerX/config/example.conf"); // не використовується тут, але потрібен для ctor
+    config::ServerConfig cfg("config/example.conf");
     ResponseBuilder rb(/*port*/9191, /*server_name*/"localhost", cfg);
 
     bool ok = rb.buildError("HTTP/1.1", "close", http::NOT_FOUND, errfile);
     CHECK(ok);
 
-    const Response& resp = rb.getResponse();
+    const http::Response& resp = rb.getResponse();
     const std::string wire = resp.toString();
 
 	CHECK(resp.getStatusCode().getCode() == http::NOT_FOUND);
@@ -34,7 +34,7 @@ TEST_CASE("buildError: returns proper status and loads body from file") {
 TEST_CASE("buildGetFile: returns 200 for existing index file") {
     const std::string tmp =  "test_tmp_dir";
 
-    config::ServerConfig cfg("/home/ogrativ/projects/ServerX/config/example.conf");
+    config::ServerConfig cfg("config/example.conf");
 
     ResponseBuilder rb(/*port*/9191, /*server_name*/"localhost", cfg);
 
@@ -42,7 +42,7 @@ TEST_CASE("buildGetFile: returns 200 for existing index file") {
 	bool ok = rb.build("HTTP/1.1", "close", "GET", /*dirPath*/tmp, /*filename*/"index.html");
     CHECK(ok);
 
-	 const Response& resp = rb.getResponse();
+	 const http::Response& resp = rb.getResponse();
 	 std::string message = resp.getStatusCode().getMessage();
 	 
 	CHECK(resp.getStatusCode().getCode() == http::OK);

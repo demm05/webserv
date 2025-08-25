@@ -5,20 +5,20 @@ http::Response::Response()
     buildResponseStream();
 }
 
-Response::Response(const std::string &httpVersion, const std::string &connectionType,
-                   const http::StatusCode &statusCode, const ResponseContent &content)
+http::Response::Response(const std::string &httpVersion, const std::string &connectionType,
+                   const http::StatusCode &statusCode, const http::ResponseContent &content)
     : httpVersion_(httpVersion), connectionType_(connectionType), statusCode_(statusCode),
       content_(content) {
     buildResponseStream();
 }
 
-Response::Response(const Response &other)
+http::Response::Response(const http::Response &other)
     : httpVersion_(other.httpVersion_), connectionType_(other.connectionType_),
       statusCode_(other.statusCode_), content_(other.content_) {
     buildResponseStream();
 }
 
-Response &Response::operator=(const Response &other) {
+http::Response &http::Response::operator=(const http::Response &other) {
     if (this != &other) {
         httpVersion_ = other.httpVersion_;
         connectionType_ = other.connectionType_;
@@ -29,26 +29,26 @@ Response &Response::operator=(const Response &other) {
     return *this;
 }
 
-const std::string &Response::getHttpVersion() const {
+const std::string &http::Response::getHttpVersion() const {
     return httpVersion_;
 }
 
-const ResponseContent &Response::getContent() const {
+const http::ResponseContent &http::Response::getContent() const {
     return content_;
 }
 
-const http::StatusCode &Response::getStatusCode() const {
+const http::StatusCode &http::Response::getStatusCode() const {
     return statusCode_;
 }
 
-std::string Response::toString() const {
+std::string http::Response::toString() const {
     return respStream_.str();
 }
 
-Response::~Response() {
+http::Response::~Response() {
 }
 
-void Response::buildResponseStream() {
+void http::Response::buildResponseStream() {
     respStream_.str(""); // Clear the stream
     respStream_ << httpVersion_ << " " << statusCode_.getCode() << " " << statusCode_.getMessage()
                 << "\r\n"

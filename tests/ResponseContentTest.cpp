@@ -38,94 +38,94 @@ static void writeMimeFile(const std::string& content, const char* path) {
 }
 
 static void test_basic_two_column() {
-    ResponseContent rc;
+    http::ResponseContent rc;
 
 	writeMimeFile("<!DOCTYPE html><html><head><title>Example</title></head><body><p>This is an example of a simple HTML page with one paragraph.</p></body></html>", "test_files/index.html");
-    rc = ResponseContent("test_files/index.html");
+    rc = http::ResponseContent("test_files/index.html");
     CHECK(mimeTypeCheck(rc.getType(), "text/html"));
 
     writeMimeFile("test_files/style.css", "test_files/style.css");
-    rc = ResponseContent("test_files/style.css");
+    rc = http::ResponseContent("test_files/style.css");
     CHECK(mimeTypeCheck(rc.getType(), "text/css"));
 
     writeMimeFile("test_files/photo.jpg", "test_files/photo.jpg");
-    rc = ResponseContent("test_files/photo.jpg");
+    rc = http::ResponseContent("test_files/photo.jpg");
     CHECK(mimeTypeCheck(rc.getType(), "image/jpeg"));
 
     writeMimeFile("test_files/README", "test_files/README");
-    rc = ResponseContent("test_files/README");
+    rc = http::ResponseContent("test_files/README");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
 
     writeMimeFile("test_files/.bashrc", "test_files/.bashrc");
-    rc = ResponseContent("test_files/.bashrc");
+    rc = http::ResponseContent("test_files/.bashrc");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
 
     writeMimeFile("test_files/weird.", "test_files/weird.");
-    rc = ResponseContent("test_files/weird.");
+    rc = http::ResponseContent("test_files/weird.");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
 }
 
 static void test_whitespace_tabs_comments() {
 
-    ResponseContent rc;
+    http::ResponseContent rc;
 
     writeMimeFile("test_files/anim.gif", "test_files/anim.gif");
-    rc = ResponseContent("test_files/anim.gif");
+    rc = http::ResponseContent("test_files/anim.gif");
     CHECK(mimeTypeCheck(rc.getType(), "image/gif"));
 
     writeMimeFile("test_files/data.json", "test_files/data.json");
-    rc = ResponseContent("test_files/data.json");
+    rc = http::ResponseContent("test_files/data.json");
     CHECK(mimeTypeCheck(rc.getType(), "application/json"));
 
     writeMimeFile("test_files/note.TXT", "test_files/note.TXT");
-    rc = ResponseContent("test_files/note.TXT");
+    rc = http::ResponseContent("test_files/note.TXT");
     CHECK(mimeTypeCheck(rc.getType(), "text/plain"));
 }
 
 static void test_multiple_exts_in_one_line() {
 
-    ResponseContent rc;
+    http::ResponseContent rc;
 
     writeMimeFile("test_files/script.js", "test_files/script.js");
-    rc = ResponseContent("test_files/script.js");
+    rc = http::ResponseContent("test_files/script.js");
     CHECK(mimeTypeCheck(rc.getType(), "application/javascript"));
 
 	writeMimeFile("test_files/module.mjs", "test_files/module.mjs");
-    rc = ResponseContent("test_files/module.mjs");
+    rc = http::ResponseContent("test_files/module.mjs");
     CHECK(mimeTypeCheck(rc.getType(), "application/javascript"));
 
 	writeMimeFile("test_files/photo.jpeg", "test_files/photo.jpeg");
-    rc = ResponseContent("test_files/photo.jpeg");
+    rc = http::ResponseContent("test_files/photo.jpeg");
     CHECK(mimeTypeCheck(rc.getType(), "image/jpeg"));
 
 	writeMimeFile("test_files/vector.svg", "test_files/vector.svg");
-    rc = ResponseContent("test_files/vector.svg");
+    rc = http::ResponseContent("test_files/vector.svg");
     CHECK(mimeTypeCheck(rc.getType(), "image/svg+xml"));
 }
 
 static void test_leading_dot_in_mapping() {
 
-    ResponseContent rc;
+    http::ResponseContent rc;
 
 	writeMimeFile("test_files/icon.PNG", "test_files/icon.PNG");
-    rc = ResponseContent("test_files/icon.PNG");
+    rc = http::ResponseContent("test_files/icon.PNG");
     CHECK(mimeTypeCheck(rc.getType(), "image/png"));
 
 	writeMimeFile("test_files/report.pdf", "test_files/report.pdf");
-    rc = ResponseContent("test_files/report.pdf");
+    rc = http::ResponseContent("test_files/report.pdf");
     CHECK(mimeTypeCheck(rc.getType(), "application/pdf"));
 }
 
 static void test_unknown_extension_defaults() {
 
-    ResponseContent rc;
+    http::ResponseContent rc;
 
 	writeMimeFile("test_files/archive.xyz", "test_files/archive.xyz");
-    rc = ResponseContent("test_files/archive.xyz");
+    rc = http::ResponseContent("test_files/archive.xyz");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
 
 	writeMimeFile("test_files/unknown.ext", "test_files/unknown.ext");
-    rc = ResponseContent("test_files/unknown.ext");
+    rc = http::ResponseContent("test_files/unknown.ext");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
 }
 
@@ -169,7 +169,7 @@ TEST_CASE("testing the ResponseContent class") {
     test_leading_dot_in_mapping();
     test_unknown_extension_defaults();
 
-	ResponseContent rc("test_files/index.html");
+	http::ResponseContent rc("test_files/index.html");
 	CHECK(bodyCheck(rc.getBody(), "<!DOCTYPE html><html><head><title>Example</title></head><body><p>This is an example of a simple HTML page with one paragraph.</p></body></html>"));
 
 	removeRecursive("test_files"); // Clean up the test directory
