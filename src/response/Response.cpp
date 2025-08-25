@@ -49,6 +49,7 @@ Response::~Response() {
 }
 
 void Response::buildResponseStream() {
+    respStream_.str(""); // Clear the stream
     respStream_ << httpVersion_ << " " << statusCode_.getCode() << " " << statusCode_.getMessage()
                 << "\r\n"
                 << "Content-Type: " << content_.getType() << "\r\n"
