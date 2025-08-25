@@ -1,11 +1,12 @@
 #pragma once
 
+#include "http/utils.hpp"
 #include <string>
 #include <map>
+#include <ostream>
+#include <sstream>
 
 namespace http {
-
-enum HttpMethod { GET, POST, PUT, DELETE, UNKNOWN };
 
 /**
  * @class HttpRequest
@@ -18,13 +19,24 @@ class HttpRequest {
 public:
     typedef std::map<std::string, std::string> HeaderMap;
 
-    HttpMethod method;
+    utils::HttpMethod method;
     std::string uri;
     std::string version;
     HeaderMap headers;
     std::string body;
 
-    static HttpRequest parse();
+    static HttpRequest parse(std::string const &);
 };
+
+std::ostream &operator<<(std::ostream &o, HttpRequest const &r);
+
+namespace detail {
+
+bool parseStartLine(HttpRequest &r, std::istringstream &s);
+bool parseHeaderLine(std::string line, std::pair<std::string, std::string> &p);
+bool parseHeaders(HttpRequest::HeaderMap &m, std::istringstream &s);
+bool parseBody(HttpRequest &r, std::istringstream &s);
+
+} // namespace detail
 
 } // namespace http
