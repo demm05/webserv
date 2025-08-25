@@ -1,3 +1,5 @@
+#include "doctest.h"
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -6,8 +8,9 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+
 #include "ResponseContent.hpp"
-#include "doctest.h"
+#include "test_utils.hpp"
 
 const char* const DEFAULT_MIME_TYPE = "text/plain";
 
@@ -31,36 +34,30 @@ bool bodyCheck(const std::string& body, const std::string& expected) {
     return true;
 }
 
-static void writeMimeFile(const std::string& content, const char* path) {
-    std::ofstream out(path);
-    out << content;
-    out.close();
-}
-
 static void test_basic_two_column() {
     http::ResponseContent rc;
 
-	writeMimeFile("<!DOCTYPE html><html><head><title>Example</title></head><body><p>This is an example of a simple HTML page with one paragraph.</p></body></html>", "test_files/index.html");
+	writeFile("<!DOCTYPE html><html><head><title>Example</title></head><body><p>This is an example of a simple HTML page with one paragraph.</p></body></html>", "test_files/index.html");
     rc = http::ResponseContent("test_files/index.html");
     CHECK(mimeTypeCheck(rc.getType(), "text/html"));
 
-    writeMimeFile("test_files/style.css", "test_files/style.css");
+    writeFile("test_files/style.css", "test_files/style.css");
     rc = http::ResponseContent("test_files/style.css");
     CHECK(mimeTypeCheck(rc.getType(), "text/css"));
 
-    writeMimeFile("test_files/photo.jpg", "test_files/photo.jpg");
+    writeFile("test_files/photo.jpg", "test_files/photo.jpg");
     rc = http::ResponseContent("test_files/photo.jpg");
     CHECK(mimeTypeCheck(rc.getType(), "image/jpeg"));
 
-    writeMimeFile("test_files/README", "test_files/README");
+    writeFile("test_files/README", "test_files/README");
     rc = http::ResponseContent("test_files/README");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
 
-    writeMimeFile("test_files/.bashrc", "test_files/.bashrc");
+    writeFile("test_files/.bashrc", "test_files/.bashrc");
     rc = http::ResponseContent("test_files/.bashrc");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
 
-    writeMimeFile("test_files/weird.", "test_files/weird.");
+    writeFile("test_files/weird.", "test_files/weird.");
     rc = http::ResponseContent("test_files/weird.");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
 }
@@ -69,15 +66,15 @@ static void test_whitespace_tabs_comments() {
 
     http::ResponseContent rc;
 
-    writeMimeFile("test_files/anim.gif", "test_files/anim.gif");
+    writeFile("test_files/anim.gif", "test_files/anim.gif");
     rc = http::ResponseContent("test_files/anim.gif");
     CHECK(mimeTypeCheck(rc.getType(), "image/gif"));
 
-    writeMimeFile("test_files/data.json", "test_files/data.json");
+    writeFile("test_files/data.json", "test_files/data.json");
     rc = http::ResponseContent("test_files/data.json");
     CHECK(mimeTypeCheck(rc.getType(), "application/json"));
 
-    writeMimeFile("test_files/note.TXT", "test_files/note.TXT");
+    writeFile("test_files/note.TXT", "test_files/note.TXT");
     rc = http::ResponseContent("test_files/note.TXT");
     CHECK(mimeTypeCheck(rc.getType(), "text/plain"));
 }
@@ -86,19 +83,19 @@ static void test_multiple_exts_in_one_line() {
 
     http::ResponseContent rc;
 
-    writeMimeFile("test_files/script.js", "test_files/script.js");
+    writeFile("test_files/script.js", "test_files/script.js");
     rc = http::ResponseContent("test_files/script.js");
     CHECK(mimeTypeCheck(rc.getType(), "application/javascript"));
 
-	writeMimeFile("test_files/module.mjs", "test_files/module.mjs");
+	writeFile("test_files/module.mjs", "test_files/module.mjs");
     rc = http::ResponseContent("test_files/module.mjs");
     CHECK(mimeTypeCheck(rc.getType(), "application/javascript"));
 
-	writeMimeFile("test_files/photo.jpeg", "test_files/photo.jpeg");
+	writeFile("test_files/photo.jpeg", "test_files/photo.jpeg");
     rc = http::ResponseContent("test_files/photo.jpeg");
     CHECK(mimeTypeCheck(rc.getType(), "image/jpeg"));
 
-	writeMimeFile("test_files/vector.svg", "test_files/vector.svg");
+	writeFile("test_files/vector.svg", "test_files/vector.svg");
     rc = http::ResponseContent("test_files/vector.svg");
     CHECK(mimeTypeCheck(rc.getType(), "image/svg+xml"));
 }
@@ -107,11 +104,11 @@ static void test_leading_dot_in_mapping() {
 
     http::ResponseContent rc;
 
-	writeMimeFile("test_files/icon.PNG", "test_files/icon.PNG");
+	writeFile("test_files/icon.PNG", "test_files/icon.PNG");
     rc = http::ResponseContent("test_files/icon.PNG");
     CHECK(mimeTypeCheck(rc.getType(), "image/png"));
 
-	writeMimeFile("test_files/report.pdf", "test_files/report.pdf");
+	writeFile("test_files/report.pdf", "test_files/report.pdf");
     rc = http::ResponseContent("test_files/report.pdf");
     CHECK(mimeTypeCheck(rc.getType(), "application/pdf"));
 }
@@ -120,45 +117,13 @@ static void test_unknown_extension_defaults() {
 
     http::ResponseContent rc;
 
-	writeMimeFile("test_files/archive.xyz", "test_files/archive.xyz");
+	writeFile("test_files/archive.xyz", "test_files/archive.xyz");
     rc = http::ResponseContent("test_files/archive.xyz");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
 
-	writeMimeFile("test_files/unknown.ext", "test_files/unknown.ext");
+	writeFile("test_files/unknown.ext", "test_files/unknown.ext");
     rc = http::ResponseContent("test_files/unknown.ext");
     CHECK(mimeTypeCheck(rc.getType(), DEFAULT_MIME_TYPE));
-}
-
-bool removeRecursive(const std::string &path) {
-    DIR *dir = opendir(path.c_str());
-    if (!dir) return false;
-
-    struct dirent *entry;
-    while ((entry = readdir(dir)) != NULL) {
-        std::string name = entry->d_name;
-		// Skip the current and parent directory entries
-        if (name == "." || name == "..") continue;
-
-        std::string fullPath = path + "/" + name;
-        struct stat st;
-        if (stat(fullPath.c_str(), &st) == 0) {
-            if (S_ISDIR(st.st_mode)) {
-				// Recursively remove the directory
-                if (!removeRecursive(fullPath)) {
-                    closedir(dir);
-                    return false;
-                }
-            } else {
-				// Remove the file
-                if (unlink(fullPath.c_str()) != 0) {
-                    closedir(dir);
-                    return false;
-                }
-            }
-        }
-    }
-    closedir(dir);
-    return rmdir(path.c_str()) == 0;
 }
 
 TEST_CASE("testing the ResponseContent class") {
@@ -172,5 +137,5 @@ TEST_CASE("testing the ResponseContent class") {
 	http::ResponseContent rc("test_files/index.html");
 	CHECK(bodyCheck(rc.getBody(), "<!DOCTYPE html><html><head><title>Example</title></head><body><p>This is an example of a simple HTML page with one paragraph.</p></body></html>"));
 
-	removeRecursive("test_files"); // Clean up the test directory
+	removeDirectoryRecursive("test_files"); // Clean up the test directory
 }
