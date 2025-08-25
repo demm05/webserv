@@ -58,23 +58,22 @@ bool ResponseBuilder::buildGetFile(const std::string &httpVersion,
         return buildError(httpVersion, connectionType, http::NOT_FOUND, defaultErrorFile);
     }
 
-
-        std::string fullPath = dirPath + "/" + filename;
+    std::string fullPath = dirPath + "/" + filename;
     if (access(fullPath.c_str(), R_OK) == -1) {
         return errorHandling(httpVersion, connectionType, fullPath);
     }
-    response_ = Response(httpVersion, connectionType,
-                         http::StatusCode(http::OK),
-                         ResponseContent(fullPath.c_str()));
+    response_ = http::Response(httpVersion, connectionType, http::StatusCode(http::OK),
+                               http::ResponseContent(fullPath.c_str()));
     return true;
 }
 
 bool ResponseBuilder::buildError(const std::string &httpVersion, const std::string &connectionType,
                                  const http::Status &status, const std::string &filePath) {
-    response_ = Response(httpVersion, connectionType, http::StatusCode(status), ResponseContent(filePath.c_str()));
+    response_ = http::Response(httpVersion, connectionType, http::StatusCode(status),
+                               http::ResponseContent(filePath.c_str()));
     return true;
 }
 
-const Response &ResponseBuilder::getResponse() const {
+const http::Response &ResponseBuilder::getResponse() const {
     return response_;
 }

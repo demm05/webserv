@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 #include <iostream>
 
-bool ResponseSend::sendAll(int clientFd, const Response &response) {
+bool ResponseSend::sendAll(int clientFd, const http::Response &response) {
     return sendAll(clientFd, response.toString());
 }
 
@@ -14,12 +14,12 @@ bool ResponseSend::sendAll(int clientFd, const std::string &data) {
     const char *buf = data.c_str();
     while (sent < responseSize) {
         ssize_t n = send(clientFd, buf + sent, responseSize - sent,
-                #ifdef MSG_NOSIGNAL
-                    MSG_NOSIGNAL
-                #else
-                    0
-                #endif
-            );
+#ifdef MSG_NOSIGNAL
+                         MSG_NOSIGNAL
+#else
+                         0
+#endif
+        );
         if (n <= 0)
             return false;
         sent += static_cast<size_t>(n);

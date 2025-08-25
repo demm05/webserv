@@ -9,10 +9,10 @@ static std::string toLower(const std::string &s) {
     return r;
 }
 
-ResponseContent::ResponseContent() : body_(""), type_("") {
+http::ResponseContent::ResponseContent() : body_(""), type_("") {
 }
 
-ResponseContent::ResponseContent(const char *path) {
+http::ResponseContent::ResponseContent(const char *path) {
     std::ifstream file(path);
     std::string fileText;
     if (file) {
@@ -23,15 +23,15 @@ ResponseContent::ResponseContent(const char *path) {
     }
 }
 
-ResponseContent::ResponseContent(const std::string &body, const std::string &type)
+http::ResponseContent::ResponseContent(const std::string &body, const std::string &type)
     : body_(body), type_(type) {
 }
 
-ResponseContent::ResponseContent(const ResponseContent &other)
+http::ResponseContent::ResponseContent(const http::ResponseContent &other)
     : body_(other.body_), type_(other.type_) {
 }
 
-ResponseContent &ResponseContent::operator=(const ResponseContent &other) {
+http::ResponseContent &http::ResponseContent::operator=(const http::ResponseContent &other) {
     if (this != &other) {
         body_ = other.body_;
         type_ = other.type_;
@@ -39,22 +39,22 @@ ResponseContent &ResponseContent::operator=(const ResponseContent &other) {
     return *this;
 }
 
-const std::string &ResponseContent::getBody() const {
+const std::string &http::ResponseContent::getBody() const {
     return body_;
 }
 
-const std::string &ResponseContent::getType() const {
+const std::string &http::ResponseContent::getType() const {
     return type_;
 }
 
-size_t ResponseContent::getContentLength() const {
+size_t http::ResponseContent::getContentLength() const {
     return body_.size();
 }
 
-ResponseContent::~ResponseContent() {
+http::ResponseContent::~ResponseContent() {
 }
 
-void ResponseContent::setFileType(const std::string &path) {
+void http::ResponseContent::setFileType(const std::string &path) {
     size_t pos = path.find_last_of('.');
     if (pos != std::string::npos) {
         std::string extension = toLower(path.substr(pos + 1));

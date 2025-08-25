@@ -97,10 +97,10 @@ public:
      *
      * @return Constant reference to the Response instance.
      */
-    const Response &getResponse() const;
+    const http::Response &getResponse() const;
 
 private:
-    Response response_;                      /**< The current response object. */
+    http::Response response_;                /**< The current response object. */
     const config::ServerBlock *serverBlock_; /**< Pointer to the server block configuration. */
     bool serverBlockSet_;                    /**< Flag indicating if the server block is set. */
 
@@ -111,29 +111,4 @@ private:
 
     bool errorHandling(const std::string &httpVersion, const std::string &connectionType,
                        const std::string &filePath);
-    // /**
-    //  * @brief Helper to build a file-based response.
-    //  *
-    //  * @param httpVersion    HTTP version string.
-    //  * @param connectionType Connection type string.
-    //  * @param filePath       Path to the file.
-    //  * @param headOnly       If true, build headers only (HEAD request).
-    //  * @param mimeHint       Optional MIME type hint.
-    //  * @return True if built successfully, false otherwise.
-    //  */
-    // bool buildFileResponse_(const std::string &httpVersion, const std::string &connectionType,
-    //                         const std::string &filePath, bool headOnly,
-    //                         const std::string &mimeHint);
-
-    // /**
-    //  * @brief Helper to build an error response.
-    //  *
-    //  * @param httpVersion    HTTP version string.
-    //  * @param connectionType Connection type string.
-    //  * @param status         HTTP status code object.
-    //  * @param customBody     Optional custom body message.
-    //  * @return True if built successfully, false otherwise.
-    //  */
-    // bool buildErrorResponse_(const std::string &httpVersion, const std::string &connectionType,
-    //                          const http::StatusCode &status, const std::string &customBody);
 };

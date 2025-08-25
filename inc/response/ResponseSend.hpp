@@ -18,7 +18,7 @@ public:
      * @param clientFd File descriptor of the client socket.
      * @return True if the response was sent successfully, false otherwise.
      */
-    static bool sendAll(int clientFd, const Response &response);
+    static bool sendAll(int clientFd, const http::Response &response);
 
     /**
      * @brief Sends the entire data buffer to the client socket.

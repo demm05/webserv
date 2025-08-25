@@ -1,6 +1,6 @@
 #include "Response.hpp"
 
-Response::Response()
+http::Response::Response()
     : httpVersion_("HTTP/1.1"), connectionType_("close"), statusCode_(http::OK), content_() {
     buildResponseStream();
 }

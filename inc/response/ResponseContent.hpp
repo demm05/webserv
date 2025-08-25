@@ -5,6 +5,7 @@
 
 #define MIME_TYPES_PATH "config/mime.types"
 
+namespace http {
 /**
  * @class ResponseContent
  * @brief Encapsulates the body content and MIME type of an HTTP response.
@@ -109,3 +110,5 @@ private:
      */
     void setFileType(const std::string &path);
 };
+
+} // namespace http

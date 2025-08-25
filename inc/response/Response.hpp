@@ -5,6 +5,7 @@
 #include "HttpStatus.hpp"
 #include "ResponseContent.hpp"
 
+namespace http {
 /**
  * @class Response
  * @brief Represents a complete HTTP response message.
@@ -96,3 +97,5 @@ private:
 
     void buildResponseStream();
 };
+
+} // namespace http
